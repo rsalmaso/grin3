@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # NOTE: You may have to adjust the line above to specify the precise python
 # executable that has the grin module installed.
 import grin

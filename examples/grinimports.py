@@ -1,11 +1,11 @@
-#!/usr/bin/env python
-# -*- coding: UTF-8 -*-
-""" Transform Python files into normalized import statements for grepping.
+#!/usr/bin/env python3
+"""
+Transform Python files into normalized import statements for grepping.
 """
 
 import compiler
 from compiler.visitor import ASTVisitor, walk
-from cStringIO import StringIO
+from io import StringIO
 import os
 import shlex
 import sys
@@ -70,7 +70,7 @@ def normalize_file(filename, *args):
     """
     try:
         ast = compiler.parseFile(filename)
-    except Exception, e:
+    except:
         return StringIO('')
     ip = ImportPuller()
     walk(ast, ip)
