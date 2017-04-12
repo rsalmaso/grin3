@@ -11,7 +11,7 @@ with open(os.path.join(thisdir, 'README.rst')) as f:
 
 
 setup(
-    name='grin',
+    name='grin3',
     version='1.2.1',
     author='Robert Kern',
     author_email='robert.kern@enthought.com',
