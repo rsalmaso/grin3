@@ -43,6 +43,10 @@ def get_version(version=None):
 
 # Constants
 __version__ = get_version(VERSION)
+__author__ = 'Robert Kern'
+__author_email__ = 'robert.kern@enthought.com'
+__maintainer__ = 'Raffaele Salmaso'
+__maintainer_email__ = 'raffaele@salmaso.org'
 
 # Maintain the numerical order of these constants. We use them for sorting.
 PRE = -1
