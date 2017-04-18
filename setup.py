@@ -1,14 +1,11 @@
-import os
+import io
 
 from setuptools import setup
 import grin
 
-kwds = {}
-
 # Read the long description from the README.txt
-thisdir = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(thisdir, "README.rst")) as f:
-    kwds["long_description"] = f.read()
+with io.open("README.rst", "rt") as f:
+    long_description = f.read()
 
 
 setup(
@@ -19,6 +16,7 @@ setup(
     maintainer=grin.__maintainer__,
     maintainer_email=grin.__maintainer_email__,
     description="A grep program configured the way I like it. (python3 port)",
+    long_description=long_description,
     license="BSD",
     url="https://bitbucket.org/rsalmaso/grin3",
     classifiers=[
@@ -45,5 +43,4 @@ setup(
         "nose >= 0.10",
     ],
     test_suite="nose.collector",
-    **kwds
 )
