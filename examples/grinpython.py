@@ -15,7 +15,7 @@ import grin
 __version__ = '1.2'
 
 
-class Transformer(object):
+class Transformer:
     """
     Transform Python files to remove certain features.
     """

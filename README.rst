@@ -220,7 +220,7 @@ examples/grinpython.py allows you to search through Python files and specify whe
 
     $ grinpython.py -i --python-code grep grin.py
     grin.py:
-      187 : class GrepText(object):
+      187 : class GrepText:
       291 :     def do_grep(self, fp):
     ...
 

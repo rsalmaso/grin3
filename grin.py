@@ -217,7 +217,7 @@ def default_options():
     return opt
 
 
-class DataBlock(object):
+class DataBlock:
     """ This class holds a block of data read from a file, along with
     some preceding and trailing context.
 
@@ -246,7 +246,7 @@ class DataBlock(object):
 EMPTY_DATABLOCK = DataBlock()
 
 
-class GrepText(object):
+class GrepText:
     """ Grep a single file for a regex by iterating over the lines in a file.
 
     Attributes
@@ -573,7 +573,7 @@ class GrepText(object):
         return report
 
 
-class FileRecognizer(object):
+class FileRecognizer:
     """ Configurable way to determine what kind of file something is.
 
     Attributes
