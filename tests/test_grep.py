@@ -177,4 +177,4 @@ Symmetric 2-line context.
     >>> gt_after_context_1.do_grep(BytesIO(middle_of_line))
     [(2, 0, 'barfoobar\n', [(3, 6)]), (3, 1, 'bar\n', None)]
 
-'''
+'''  # noqa: E501

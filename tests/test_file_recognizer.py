@@ -1,4 +1,5 @@
-""" Test the file recognizer capabilities.
+"""
+Test the file recognizer capabilities.
 """
 
 import gzip
@@ -8,17 +9,19 @@ import socket
 import sys
 
 import nose
-from grin import FileRecognizer, GZIP_MAGIC
+from grin import GZIP_MAGIC, FileRecognizer
 
 
 def empty_file(filename, open=open):
     f = open(filename, 'wb')
     f.close()
 
+
 def binary_file(filename, open=open):
     f = open(filename, 'wb')
     f.write(bytes(range(255)))
     f.close()
+
 
 def text_file(filename, open=open):
     lines = [b'foo\n', b'bar\n'] * 100
@@ -28,6 +31,7 @@ def text_file(filename, open=open):
     f.writelines(lines)
     f.close()
 
+
 def fake_gzip_file(filename, open=open):
     """ Write out a binary file that has the gzip magic header bytes, but is not
     a gzip file.
@@ -36,6 +40,7 @@ def fake_gzip_file(filename, open=open):
     f.write(GZIP_MAGIC)
     f.write(bytes(range(255)))
     f.close()
+
 
 def binary_middle(filename, open=open):
     """ Write out a file that is text for the first 100 bytes, then 100 binary
@@ -47,9 +52,11 @@ def binary_middle(filename, open=open):
     f.write(text)
     f.close()
 
+
 def socket_file(filename):
     s = socket.socket(socket.AF_UNIX)
     s.bind(filename)
+
 
 def unreadable_file(filename):
     """ Write a file that does not have read permissions.
@@ -57,11 +64,13 @@ def unreadable_file(filename):
     text_file(filename)
     os.chmod(filename, 0o200)
 
+
 def unreadable_dir(filename):
     """ Make a directory that does not have read permissions.
     """
     os.mkdir(filename)
     os.chmod(filename, 0o300)
+
 
 def unexecutable_dir(filename):
     """ Make a directory that does not have execute permissions.
@@ -69,11 +78,13 @@ def unexecutable_dir(filename):
     os.mkdir(filename)
     os.chmod(filename, 0o600)
 
+
 def totally_unusable_dir(filename):
     """ Make a directory that has neither read nor execute permissions.
     """
     os.mkdir(filename)
     os.chmod(filename, 0o100)
+
 
 def setup():
     # Make files to test individual recognizers.
@@ -142,17 +153,10 @@ def setup():
     text_file('tree/totally_unusable_dir/text')
     os.chmod('tree/totally_unusable_dir', 0o100)
 
-#def ensure_deletability(arg, dirname, fnames):
-    #""" os.path.walk() callback function which will make sure every directory is
-    #readable and executable so that it may be easily deleted.
-    #"""
-    #for fn in fnames:
-        #fn = os.path.join(dirname, fn)
-        #if os.path.isdir(fn):
-            #os.chmod(fn, 0700)
 
 def teardown():
-    files_to_delete = ['empty', 'binary', 'binary_middle', 'text', 'text~',
+    files_to_delete = [
+        'empty', 'binary', 'binary_middle', 'text', 'text~',
         'empty.gz', 'binary.gz', 'text.gz', 'dir', 'binary_link', 'text_link',
         'dir_link', '.binary', '.text', '.binary.gz', '.text.gz', 'fake.gz',
         '.dir', '.binary_link', '.text_link', '.dir_link', 'unreadable_file',
@@ -170,7 +174,6 @@ def teardown():
         except Exception as e:
             print('Could not delete %s: %s' % (filename, e), file=sys.stderr)
     os.unlink('socket_test')
-#    os.path.walk('tree', ensure_deletability, None)
     for dirpath, dirnames, filenames in os.walk('tree'):
         # Make sure every directory can be deleted
         for dirname in dirnames:
@@ -184,11 +187,13 @@ def test_binary():
     assert fr.recognize_file('binary') == 'binary'
     assert fr.recognize('binary') == 'binary'
 
+
 def test_text():
     fr = FileRecognizer()
     assert not fr.is_binary('text')
     assert fr.recognize_file('text') == 'text'
     assert fr.recognize('text') == 'text'
+
 
 def test_gzipped():
     fr = FileRecognizer()
@@ -202,6 +207,7 @@ def test_gzipped():
     assert fr.recognize_file('fake.gz') == 'binary'
     assert fr.recognize('fake.gz') == 'binary'
 
+
 def test_binary_middle():
     fr = FileRecognizer(binary_bytes=100)
     assert not fr.is_binary('binary_middle')
@@ -212,14 +218,17 @@ def test_binary_middle():
     assert fr.recognize_file('binary_middle') == 'binary'
     assert fr.recognize('binary_middle') == 'binary'
 
+
 def test_socket():
-    fr= FileRecognizer()
+    fr = FileRecognizer()
     assert fr.recognize('socket_test') == 'skip'
+
 
 def test_dir():
     fr = FileRecognizer()
     assert fr.recognize_directory('dir') == 'directory'
     assert fr.recognize('dir') == 'directory'
+
 
 def test_skip_symlinks():
     fr = FileRecognizer(skip_symlink_files=True, skip_symlink_dirs=True)
@@ -230,6 +239,7 @@ def test_skip_symlinks():
     assert fr.recognize('dir_link') == 'link'
     assert fr.recognize_directory('dir_link') == 'link'
 
+
 def test_do_not_skip_symlinks():
     fr = FileRecognizer(skip_symlink_files=False, skip_symlink_dirs=False)
     assert fr.recognize('binary_link') == 'binary'
@@ -238,6 +248,7 @@ def test_do_not_skip_symlinks():
     assert fr.recognize_file('text_link') == 'text'
     assert fr.recognize('dir_link') == 'directory'
     assert fr.recognize_directory('dir_link') == 'directory'
+
 
 def test_skip_hidden():
     fr = FileRecognizer(skip_hidden_files=True, skip_hidden_dirs=True)
@@ -258,13 +269,16 @@ def test_skip_hidden():
     assert fr.recognize('.binary.gz') == 'skip'
     assert fr.recognize_file('.binary.gz') == 'skip'
 
+
 def test_skip_backup():
     fr = FileRecognizer(skip_backup_files=True)
     assert fr.recognize_file('text~') == 'skip'
 
+
 def test_do_not_skip_backup():
     fr = FileRecognizer(skip_backup_files=False)
     assert fr.recognize_file('text~') == 'text'
+
 
 def test_skip_weird_exts():
     fr = FileRecognizer(skip_exts=set())
@@ -274,9 +288,14 @@ def test_skip_weird_exts():
     assert fr.recognize_file('text#') == 'skip'
     assert fr.recognize_file('foo.bar.baz') == 'skip'
 
+
 def test_do_not_skip_hidden_or_symlinks():
-    fr = FileRecognizer(skip_hidden_files=False, skip_hidden_dirs=False,
-        skip_symlink_dirs=False, skip_symlink_files=False)
+    fr = FileRecognizer(
+        skip_hidden_files=False,
+        skip_hidden_dirs=False,
+        skip_symlink_dirs=False,
+        skip_symlink_files=False,
+    )
     assert fr.recognize('.binary') == 'binary'
     assert fr.recognize_file('.binary') == 'binary'
     assert fr.recognize('.text') == 'text'
@@ -294,9 +313,14 @@ def test_do_not_skip_hidden_or_symlinks():
     assert fr.recognize('.binary.gz') == 'binary'
     assert fr.recognize_file('.binary.gz') == 'binary'
 
+
 def test_do_not_skip_hidden_but_skip_symlinks():
-    fr = FileRecognizer(skip_hidden_files=False, skip_hidden_dirs=False,
-        skip_symlink_dirs=True, skip_symlink_files=True)
+    fr = FileRecognizer(
+        skip_hidden_files=False,
+        skip_hidden_dirs=False,
+        skip_symlink_dirs=True,
+        skip_symlink_files=True,
+    )
     assert fr.recognize('.binary') == 'binary'
     assert fr.recognize_file('.binary') == 'binary'
     assert fr.recognize('.text') == 'text'
@@ -314,6 +338,7 @@ def test_do_not_skip_hidden_but_skip_symlinks():
     assert fr.recognize('.binary.gz') == 'binary'
     assert fr.recognize_file('.binary.gz') == 'binary'
 
+
 def test_lack_of_permissions():
     fr = FileRecognizer()
     assert fr.recognize('unreadable_file') == 'unreadable'
@@ -324,6 +349,7 @@ def test_lack_of_permissions():
     assert fr.recognize_directory('unexecutable_dir') == 'directory'
     assert fr.recognize('totally_unusable_dir') == 'directory'
     assert fr.recognize_directory('totally_unusable_dir') == 'directory'
+
 
 def test_symlink_src_unreadable():
     fr = FileRecognizer(skip_symlink_files=False, skip_symlink_dirs=False)
@@ -336,6 +362,7 @@ def test_symlink_src_unreadable():
     assert fr.recognize('totally_unusable_dir_link') == 'directory'
     assert fr.recognize_directory('totally_unusable_dir_link') == 'directory'
 
+
 def test_skip_ext():
     fr = FileRecognizer(skip_exts=set(['.skip_ext']))
     assert fr.recognize('text.skip_ext') == 'skip'
@@ -347,6 +374,7 @@ def test_skip_ext():
     assert fr.recognize('dir.skip_ext') == 'directory'
     assert fr.recognize_directory('dir.skip_ext') == 'directory'
 
+
 def test_skip_dir():
     fr = FileRecognizer(skip_dirs=set(['skip_dir', 'fake_skip_dir']))
     assert fr.recognize('skip_dir') == 'skip'
@@ -354,9 +382,14 @@ def test_skip_dir():
     assert fr.recognize('fake_skip_dir') == 'text'
     assert fr.recognize_file('fake_skip_dir') == 'text'
 
+
 def test_walking():
-    fr = FileRecognizer(skip_hidden_files=True, skip_hidden_dirs=True,
-        skip_exts=set(['.skip_ext']),skip_dirs=set(['skip_dir']))
+    fr = FileRecognizer(
+        skip_hidden_files=True,
+        skip_hidden_dirs=True,
+        skip_exts=set(['.skip_ext']),
+        skip_dirs=set(['skip_dir']),
+    )
     truth = [
         ('tree/binary', 'binary'),
         ('tree/dir.skip_ext/text', 'text'),
@@ -372,13 +405,19 @@ def test_walking():
 def predot():
     os.chdir('tree')
 
+
 def postdot():
     os.chdir('..')
 
+
 @nose.with_setup(predot, postdot)
 def test_dot():
-    fr = FileRecognizer(skip_hidden_files=True, skip_hidden_dirs=True,
-        skip_exts=set(['.skip_ext']),skip_dirs=set(['skip_dir']))
+    fr = FileRecognizer(
+        skip_hidden_files=True,
+        skip_hidden_dirs=True,
+        skip_exts=set(['.skip_ext']),
+        skip_dirs=set(['skip_dir']),
+    )
     truth = [
         ('./binary', 'binary'),
         ('./dir.skip_ext/text', 'text'),
@@ -390,18 +429,25 @@ def test_dot():
     result = sorted(fr.walk('.'))
     assert result == truth
 
+
 def predotdot():
     os.chdir('tree')
     os.chdir('dir')
+
 
 def postdotdot():
     os.chdir('..')
     os.chdir('..')
 
+
 @nose.with_setup(predotdot, postdotdot)
 def test_dot_dot():
-    fr = FileRecognizer(skip_hidden_files=True, skip_hidden_dirs=True,
-        skip_exts=set(['.skip_ext']),skip_dirs=set(['skip_dir']))
+    fr = FileRecognizer(
+        skip_hidden_files=True,
+        skip_hidden_dirs=True,
+        skip_exts=set(['.skip_ext']),
+        skip_dirs=set(['skip_dir']),
+    )
     truth = [
         ('../binary', 'binary'),
         ('../dir.skip_ext/text', 'text'),

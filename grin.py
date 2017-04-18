@@ -15,7 +15,6 @@ import stat
 import sys
 from io import UnsupportedOperation
 
-
 VERSION = (1, 2, 1, 'final', 0)
 
 
@@ -54,7 +53,7 @@ MATCH = 0
 POST = 1
 
 # Use file(1)'s choices for what's text and what's not.
-TEXTCHARS = bytes([7,8,9,10,12,13,27] + list(range(0x20, 0x100)))
+TEXTCHARS = bytes([7, 8, 9, 10, 12, 13, 27] + list(range(0x20, 0x100)))
 ALLBYTES = bytes(range(256))
 
 COLOR_TABLE = ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'default']
@@ -62,13 +61,16 @@ COLOR_STYLE = {
     'filename': dict(fg="green", bold=True),
     'searchterm': dict(fg="black", bg="yellow"),
 }
-to_str = lambda s : s.decode('latin1')
 
 # gzip magic header bytes.
 GZIP_MAGIC = b'\037\213'
 
 # Target amount of data to read into memory at a time.
 READ_BLOCKSIZE = 16 * 1024 * 1024
+
+
+def to_str(s):
+    return s.decode('latin1')
 
 
 def is_binary_string(bytes):

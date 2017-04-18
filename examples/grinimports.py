@@ -3,21 +3,21 @@
 Transform Python files into normalized import statements for grepping.
 """
 
-import compiler
-from compiler.visitor import ASTVisitor, walk
-from io import StringIO
 import os
 import shlex
 import sys
+from io import StringIO
 
+import compiler
 import grin
-
+from compiler.visitor import ASTVisitor, walk
 
 __version__ = '1.2'
 
+
 def normalize_From(node):
-    """ Return a list of strings of Python 'from' statements, one import on each
-    line.
+    """
+    Return a list of strings of Python 'from' statements, one import on each line.
     """
     statements = []
     children = node.getChildren()
@@ -30,9 +30,10 @@ def normalize_From(node):
         statements.append(line)
     return statements
 
+
 def normalize_Import(node):
-    """ Return a list of strings of Python 'import' statements, one import on
-    each line.
+    """
+    Return a list of strings of Python 'import' statements, one import on each line.
     """
     statements = []
     children = node.getChildren()
@@ -44,8 +45,10 @@ def normalize_Import(node):
         statements.append(line)
     return statements
 
+
 class ImportPuller(ASTVisitor):
-    """ Extract import statements from an AST.
+    """
+    Extract import statements from an AST.
     """
     def __init__(self):
         ASTVisitor.__init__(self)
@@ -58,13 +61,15 @@ class ImportPuller(ASTVisitor):
         self.statements.extend(normalize_Import(node))
 
     def as_string(self):
-        """ Concatenate all of the 'import' and 'from' statements.
+        """
+        Concatenate all of the 'import' and 'from' statements.
         """
         return ''.join(self.statements)
 
 
 def normalize_file(filename, *args):
-    """ Import-normalize a file.
+    """
+    Import-normalize a file.
 
     If the file is not parseable, an empty filelike object will be returned.
     """
@@ -76,13 +81,14 @@ def normalize_file(filename, *args):
     walk(ast, ip)
     return StringIO(ip.as_string())
 
+
 def get_grinimports_arg_parser(parser=None):
-    """ Create the command-line parser.
+    """
+    Create the command-line parser.
     """
     parser = grin.get_grin_arg_parser(parser)
     parser.set_defaults(include='*.py')
-    parser.description = ("Extract, normalize and search import statements "
-        "from Python files.")
+    parser.description = ("Extract, normalize and search import statements from Python files.")
     parser.epilog = """
 For example, if I have a file example.py with a bunch of imports:
 
@@ -126,6 +132,7 @@ the import statements are not normalized.
 
     return parser
 
+
 def grinimports_main(argv=None):
     if argv is None:
         # Look at the GRIN_ARGS environment variable for more arguments.
@@ -136,9 +143,8 @@ def grinimports_main(argv=None):
     if args.context is not None:
         args.before_context = args.context
         args.after_context = args.context
-    args.use_color = args.force_color or (not args.no_color and
-        sys.stdout.isatty() and
-        (os.environ.get('TERM') != 'dumb'))
+    _isatty = (not args.no_color and sys.stdout.isatty() and (os.environ.get('TERM') != 'dumb'))
+    args.use_color = args.force_color or _isatty
 
     regex = grin.get_regex(args)
     g = grin.GrepText(regex, args)
@@ -147,6 +153,7 @@ def grinimports_main(argv=None):
             # Ignore gzipped files.
             report = g.grep_a_file(filename, opener=normalize_file)
             sys.stdout.write(report)
+
 
 if __name__ == '__main__':
     grinimports_main()

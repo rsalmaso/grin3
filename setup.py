@@ -1,7 +1,7 @@
 import io
 
-from setuptools import setup
 import grin
+from setuptools import setup
 
 # Read the long description from the README.txt
 with io.open("README.rst", "rt") as f:
