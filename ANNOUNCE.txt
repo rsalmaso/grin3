@@ -6,6 +6,11 @@ files, primarily source code.
  Git (mirror): https://bitbucket.org/rsalmaso/grin3
  License:      BSD
 
+grin 1.2.2 is a python3 only port.
+
+  * python3 support added.
+  * python2 support dropped.
+
 grin 1.2.1 is a bug-fix release.
 
   * Windows defaults to not coloring the output. (Paul Pelzl)
