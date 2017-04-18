@@ -233,12 +233,14 @@ To Do
 
 * Figure out the story for grepping UTF-8, UTF-16 and UTF-32 Unicode text files.
 
-* Python 3
-
 
 Bugs and Such
 -------------
 
-Please make a new issue at the Github issue tracker.
+Please make a new issue at the Bitbucket issue tracker
 
-  https://github.com/rkern/grin
+  https://bitbucket.org/rsalmaso/grin3
+
+or on the Github mirror
+
+  https://github.com/rsalmaso/grin3
