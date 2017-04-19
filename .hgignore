@@ -1,0 +1,16 @@
+syntax: regexp
+build/
+dist/
+grin3.egg-info/
+^\.venv/
+^\.idea
+
+syntax: glob
+*~
+*.bak
+*.swp
+*-
+*.pyc
+*.kpf
+*.orig
+*.bak
