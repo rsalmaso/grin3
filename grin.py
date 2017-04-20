@@ -299,7 +299,7 @@ class GrepText:
 
         if not isinstance(block_main, str):
             # python3: ensure string are returned
-            block_main = block_main.decode("utf-8")
+            block_main = to_str(block_main)
 
         if prev is None:
             if is_last_block:
@@ -345,7 +345,7 @@ class GrepText:
             after_lines = ''.join(after_lines_list)
 
         result = DataBlock(
-            data=(before_lines + curr_block + after_lines).decode("utf-8"),
+            data=to_str(before_lines + curr_block + after_lines),
             start=len(before_lines),
             end=len(before_lines) + len(curr_block),
             before_count=before_count,
