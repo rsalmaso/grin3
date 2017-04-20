@@ -6,6 +6,10 @@ files, primarily source code.
  Git (mirror): https://bitbucket.org/rsalmaso/grin3
  License:      BSD
 
+grin 1.2.3 is a bug-fix release.
+
+  * removed UnicodeDecodeError
+
 grin 1.2.2 is a python3 only port.
 
   * python3 support added.

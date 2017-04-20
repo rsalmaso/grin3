@@ -42,7 +42,7 @@ import stat
 import sys
 from io import UnsupportedOperation
 
-VERSION = (1, 2, 2, 'final', 0)
+VERSION = (1, 2, 3, 'final', 0)
 
 
 def get_version(version=None):
