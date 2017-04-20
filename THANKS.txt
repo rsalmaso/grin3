@@ -1,6 +1,8 @@
 Acknowledgements
 ----------------
 
+Joris Vankerschaver and Matthew Brett for python3 support.
+
 Stefan van der Walt for implementing the --include feature.
 
 Peter Wang for implementing colorization.
