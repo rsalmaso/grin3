@@ -12,7 +12,7 @@ import compiler
 import grin
 from compiler.visitor import ASTVisitor, walk
 
-__version__ = '1.2'
+__version__ = "1.2"
 
 
 def normalize_From(node):
@@ -21,12 +21,12 @@ def normalize_From(node):
     """
     statements = []
     children = node.getChildren()
-    module = '.'*node.level + node.modname
+    module = "." * node.level + node.modname
     for name, asname in children[1]:
-        line = 'from %s import %s' % (module, name)
+        line = "from %s import %s" % (module, name)
         if asname is not None:
-            line += ' as %s' % asname
-        line += '\n'
+            line += " as %s" % asname
+        line += "\n"
         statements.append(line)
     return statements
 
@@ -38,10 +38,10 @@ def normalize_Import(node):
     statements = []
     children = node.getChildren()
     for name, asname in children[0]:
-        line = 'import %s' % (name)
+        line = "import %s" % (name)
         if asname is not None:
-            line += ' as %s' % asname
-        line += '\n'
+            line += " as %s" % asname
+        line += "\n"
         statements.append(line)
     return statements
 
@@ -50,6 +50,7 @@ class ImportPuller(ASTVisitor):
     """
     Extract import statements from an AST.
     """
+
     def __init__(self):
         ASTVisitor.__init__(self)
         self.statements = []
@@ -64,7 +65,7 @@ class ImportPuller(ASTVisitor):
         """
         Concatenate all of the 'import' and 'from' statements.
         """
-        return ''.join(self.statements)
+        return "".join(self.statements)
 
 
 def normalize_file(filename, *args):
@@ -76,7 +77,7 @@ def normalize_file(filename, *args):
     try:
         ast = compiler.parseFile(filename)
     except:
-        return StringIO('')
+        return StringIO("")
     ip = ImportPuller()
     walk(ast, ip)
     return StringIO(ip.as_string())
@@ -87,8 +88,10 @@ def get_grinimports_arg_parser(parser=None):
     Create the command-line parser.
     """
     parser = grin.get_grin_arg_parser(parser)
-    parser.set_defaults(include='*.py')
-    parser.description = ("Extract, normalize and search import statements from Python files.")
+    parser.set_defaults(include="*.py")
+    parser.description = (
+        "Extract, normalize and search import statements from Python files."
+    )
     parser.epilog = """
 For example, if I have a file example.py with a bunch of imports:
 
@@ -127,8 +130,8 @@ the import statements are not normalized.
         6 :     "Do something to foo.baz"
 """
     for action in parser._actions:
-        if hasattr(action, 'version'):
-            action.version = 'grinpython %s' % __version__
+        if hasattr(action, "version"):
+            action.version = "grinpython %s" % __version__
 
     return parser
 
@@ -136,24 +139,26 @@ the import statements are not normalized.
 def grinimports_main(argv=None):
     if argv is None:
         # Look at the GRIN_ARGS environment variable for more arguments.
-        env_args = shlex.split(os.getenv('GRIN_ARGS', ''))
+        env_args = shlex.split(os.getenv("GRIN_ARGS", ""))
         argv = [sys.argv[0]] + env_args + sys.argv[1:]
     parser = get_grinimports_arg_parser()
     args = parser.parse_args(argv[1:])
     if args.context is not None:
         args.before_context = args.context
         args.after_context = args.context
-    _isatty = (not args.no_color and sys.stdout.isatty() and (os.environ.get('TERM') != 'dumb'))
+    _isatty = (
+        not args.no_color and sys.stdout.isatty() and (os.environ.get("TERM") != "dumb")
+    )
     args.use_color = args.force_color or _isatty
 
     regex = grin.get_regex(args)
     g = grin.GrepText(regex, args)
     for filename, kind in grin.get_filenames(args):
-        if kind == 'text':
+        if kind == "text":
             # Ignore gzipped files.
             report = g.grep_a_file(filename, opener=normalize_file)
             sys.stdout.write(report)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     grinimports_main()

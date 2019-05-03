@@ -34,13 +34,8 @@ setup(
     ],
     py_modules=["grin"],
     entry_points=dict(
-        console_scripts=[
-            "grin = grin:grin_main",
-            "grind = grin:grind_main",
-        ],
+        console_scripts=["grin = grin:grin_main", "grind = grin:grind_main"]
     ),
-    tests_require=[
-        "nose >= 0.10",
-    ],
+    tests_require=["nose >= 0.10"],
     test_suite="nose.collector",
 )

@@ -42,13 +42,13 @@ import stat
 import sys
 from io import UnsupportedOperation
 
-VERSION = (1, 2, 3, 'final', 0)
+VERSION = (1, 2, 3, "final", 0)
 
 
 def get_version(version=None):
     "Returns a PEP 386-compliant version number from VERSION."
     assert len(version) == 5
-    assert version[3] in ('alpha', 'beta', 'rc', 'final')
+    assert version[3] in ("alpha", "beta", "rc", "final")
 
     # Now build the two parts of the version number:
     # main = X.Y[.Z]
@@ -56,12 +56,12 @@ def get_version(version=None):
     #     | {a|b|c}N - for alpha, beta and rc releases
 
     parts = 2 if version[2] == 0 else 3
-    main = '.'.join(str(x) for x in version[:parts])
+    main = ".".join(str(x) for x in version[:parts])
 
-    sub = ''
+    sub = ""
 
-    if version[3] != 'final':
-        mapping = {'alpha': 'a', 'beta': 'b', 'rc': 'c'}
+    if version[3] != "final":
+        mapping = {"alpha": "a", "beta": "b", "rc": "c"}
         sub = mapping[version[3]] + str(version[4])
 
     return str(main + sub)
@@ -69,10 +69,10 @@ def get_version(version=None):
 
 # Constants
 __version__ = get_version(VERSION)
-__author__ = 'Robert Kern'
-__author_email__ = 'robert.kern@enthought.com'
-__maintainer__ = 'Raffaele Salmaso'
-__maintainer_email__ = 'raffaele@salmaso.org'
+__author__ = "Robert Kern"
+__author_email__ = "robert.kern@enthought.com"
+__maintainer__ = "Raffaele Salmaso"
+__maintainer_email__ = "raffaele@salmaso.org"
 
 # Maintain the numerical order of these constants. We use them for sorting.
 PRE = -1
@@ -83,21 +83,31 @@ POST = 1
 TEXTCHARS = bytes([7, 8, 9, 10, 12, 13, 27] + list(range(0x20, 0x100)))
 ALLBYTES = bytes(range(256))
 
-COLOR_TABLE = ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white', 'default']
+COLOR_TABLE = [
+    "black",
+    "red",
+    "green",
+    "yellow",
+    "blue",
+    "magenta",
+    "cyan",
+    "white",
+    "default",
+]
 COLOR_STYLE = {
-    'filename': dict(fg="green", bold=True),
-    'searchterm': dict(fg="black", bg="yellow"),
+    "filename": dict(fg="green", bold=True),
+    "searchterm": dict(fg="black", bg="yellow"),
 }
 
 # gzip magic header bytes.
-GZIP_MAGIC = b'\037\213'
+GZIP_MAGIC = b"\037\213"
 
 # Target amount of data to read into memory at a time.
 READ_BLOCKSIZE = 16 * 1024 * 1024
 
 
 def to_str(s):
-    return s.decode('latin1')
+    return s.decode("latin1")
 
 
 def is_binary_string(bytes):
@@ -124,10 +134,10 @@ def get_line_offsets(block):
     # Note: this implementation based on string.find() benchmarks about twice as
     # fast as a list comprehension using re.finditer().
     line_offsets = [0]
-    line_count = 0    # Count of lines inside range [block.start, block.end) *only*
+    line_count = 0  # Count of lines inside range [block.start, block.end) *only*
     s = block.data
     while True:
-        next_newline = s.find('\n', line_offsets[-1])
+        next_newline = s.find("\n", line_offsets[-1])
         if next_newline < 0:
             # Tack on a final "line start" corresponding to EOF, if not done already.
             # This makes it possible to determine the length of each line by computing
@@ -181,8 +191,8 @@ def colorize(s, fg=None, bg=None, bold=False, underline=False, reverse=False):
         style_fragments.append(4)
     if reverse:
         style_fragments.append(7)
-    style_start = '\x1b[' + ';'.join(map(str, style_fragments)) + 'm'
-    style_end = '\x1b[0m'
+    style_start = "\x1b[" + ";".join(map(str, style_fragments)) + "m"
+    style_end = "\x1b[0m"
     return style_start + s + style_end
 
 
@@ -235,7 +245,8 @@ class DataBlock:
     is_last : bool
         True if this is the final block in the file
     """
-    def __init__(self, data='', start=0, end=0, before_count=0, is_last=False):
+
+    def __init__(self, data="", start=0, end=0, before_count=0, is_last=False):
         self.data = data
         self.start = start
         self.end = end
@@ -328,21 +339,33 @@ class GrepText:
             before_start = prev.end - 1
             before_count = 0
             for i in range(self.options.before_context):
-                ofs = prev.data.rfind('\n', 0, before_start)
+                ofs = prev.data.rfind("\n", 0, before_start)
                 before_start = ofs
                 before_count += 1
                 if ofs < 0:
                     break
             before_start += 1
-        before_lines = prev.data[before_start:prev.end]
+        before_lines = prev.data[before_start : prev.end]
         # Using readline() to force this block out to a newline boundary...
-        curr_block = (prev.data[prev.end:] + block_main + ('' if is_last_block else fp.readline()))
+        try:
+            curr_block = (
+                prev.data[prev.end :]
+                + block_main
+                + ("" if is_last_block else fp.readline())
+            )
+        except TypeError as ex:
+            print(ex)
+            print(prev)
+            print(block_main)
+            raise ex
         # Read in some lines of 'after' context.
         if is_last_block:
-            after_lines = ''
+            after_lines = ""
         else:
-            after_lines_list = [fp.readline() for i in range(self.options.after_context)]
-            after_lines = ''.join(after_lines_list)
+            after_lines_list = [
+                fp.readline() for i in range(self.options.after_context)
+            ]
+            after_lines = "".join(after_lines_list)
 
         result = DataBlock(
             data=to_str(before_lines + curr_block + after_lines),
@@ -385,7 +408,9 @@ class GrepText:
 
         block = self.read_block_with_context(None, fp, fp_size)
         while block.end > block.start:
-            (block_line_count, block_context) = self.do_grep_block(block, line_count - block.before_count)
+            (block_line_count, block_context) = self.do_grep_block(
+                block, line_count - block.before_count
+            )
             context += block_context
             if block.is_last:
                 break
@@ -432,25 +457,39 @@ class GrepText:
         line_count = None
 
         def build_match_context(match):
-            match_line_num = bisect.bisect(line_offsets, match.start() + block.start) - 1
+            match_line_num = (
+                bisect.bisect(line_offsets, match.start() + block.start) - 1
+            )
             before_count = min(before, match_line_num)
             after_count = min(after, (len(line_offsets) - 1) - match_line_num - 1)
-            match_line = block.data[line_offsets[match_line_num]:line_offsets[match_line_num + 1]]
+            match_line = block.data[
+                line_offsets[match_line_num] : line_offsets[match_line_num + 1]
+            ]
             spans = [m.span() for m in self.regex.finditer(match_line)]
 
             before_ctx = [
-                (i + line_num_offset, PRE, block.data[line_offsets[i]:line_offsets[i+1]], None)
+                (
+                    i + line_num_offset,
+                    PRE,
+                    block.data[line_offsets[i] : line_offsets[i + 1]],
+                    None,
+                )
                 for i in range(match_line_num - before_count, match_line_num)
             ]
             after_ctx = [
-                (i + line_num_offset, POST, block.data[line_offsets[i]:line_offsets[i+1]], None)
+                (
+                    i + line_num_offset,
+                    POST,
+                    block.data[line_offsets[i] : line_offsets[i + 1]],
+                    None,
+                )
                 for i in range(match_line_num + 1, match_line_num + after_count + 1)
             ]
             match_ctx = [(match_line_num + line_num_offset, MATCH, match_line, spans)]
             return before_ctx + match_ctx + after_ctx
 
         # Using re.MULTILINE here, so ^ and $ will work as expected.
-        for match in self.regex_m.finditer(block.data[block.start:block.end]):
+        for match in self.regex_m.finditer(block.data[block.start : block.end]):
             # Computing line offsets is expensive, so we do it lazily.  We don't
             # take the extra CPU hit unless there's a regex match in the file.
             if line_offsets is None:
@@ -495,27 +534,35 @@ class GrepText:
             might be an empty string without a newline.
         """
         if len(context_lines) == 0:
-            return ''
+            return ""
         lines = []
         if not self.options.show_match:
             # Just show the filename if we match.
-            line = '%s\n' % filename
+            line = "%s\n" % filename
             lines.append(line)
         else:
-            if self.options.show_filename and filename is not None and not self.options.show_emacs:
-                line = '%s:\n' % filename
+            if (
+                self.options.show_filename
+                and filename is not None
+                and not self.options.show_emacs
+            ):
+                line = "%s:\n" % filename
                 if self.options.use_color:
-                    line = colorize(line, **COLOR_STYLE.get('filename', {}))
+                    line = colorize(line, **COLOR_STYLE.get("filename", {}))
                 lines.append(line)
             if self.options.show_emacs:
-                template = '%(filename)s:%(lineno)s: %(line)s'
+                template = "%(filename)s:%(lineno)s: %(line)s"
             elif self.options.show_line_numbers:
-                template = '%(lineno)5s %(sep)s %(line)s'
+                template = "%(lineno)5s %(sep)s %(line)s"
             else:
-                template = '%(line)s'
+                template = "%(line)s"
             for i, kind, line, spans in context_lines:
-                if self.options.use_color and kind == MATCH and 'searchterm' in COLOR_STYLE:
-                    style = COLOR_STYLE['searchterm']
+                if (
+                    self.options.use_color
+                    and kind == MATCH
+                    and "searchterm" in COLOR_STYLE
+                ):
+                    style = COLOR_STYLE["searchterm"]
                     orig_line = line[:]
                     total_offset = 0
                     for start, end in spans:
@@ -527,17 +574,17 @@ class GrepText:
                         total_offset += len(color_substring) - len(old_substring)
 
                 ns = dict(
-                    lineno=i+1,
-                    sep={PRE: '-', POST: '+', MATCH: ':'}[kind],
+                    lineno=i + 1,
+                    sep={PRE: "-", POST: "+", MATCH: ":"}[kind],
                     line=line,
                     filename=filename,
                 )
                 line = template % ns
                 lines.append(line)
-                if not line.endswith('\n'):
-                    lines.append('\n')
+                if not line.endswith("\n"):
+                    lines.append("\n")
 
-        text = ''.join(lines)
+        text = "".join(lines)
         return text
 
     def grep_a_file(self, filename, opener=open):
@@ -558,16 +605,16 @@ class GrepText:
             The grep results as text.
         """
         # Special-case stdin as "-".
-        if filename == '-':
+        if filename == "-":
             f = sys.stdin
-            filename = '<STDIN>'
+            filename = "<STDIN>"
         else:
             # Always open in binary mode
-            f = opener(filename, 'rb')
+            f = opener(filename, "rb")
         try:
             unique_context = self.do_grep(f)
         finally:
-            if filename != '-':
+            if filename != "-":
                 f.close()
         report = self.report(unique_context, filename)
         return report
@@ -600,10 +647,17 @@ class FileRecognizer:
         binary characters.
     """
 
-    def __init__(self, skip_hidden_dirs=False, skip_hidden_files=False,
-                 skip_backup_files=False, skip_dirs=set(), skip_exts=set(),
-                 skip_symlink_dirs=True, skip_symlink_files=True,
-                 binary_bytes=4096):
+    def __init__(
+        self,
+        skip_hidden_dirs=False,
+        skip_hidden_files=False,
+        skip_backup_files=False,
+        skip_dirs=set(),
+        skip_exts=set(),
+        skip_symlink_dirs=True,
+        skip_symlink_files=True,
+        binary_bytes=4096,
+    ):
         self.skip_hidden_dirs = skip_hidden_dirs
         self.skip_hidden_files = skip_hidden_files
         self.skip_backup_files = skip_backup_files
@@ -616,7 +670,7 @@ class FileRecognizer:
         self.skip_exts_simple = set()
         self.skip_exts_endswith = list()
         for ext in skip_exts:
-            if os.path.splitext('foo.bar'+ext)[1] == ext:
+            if os.path.splitext("foo.bar" + ext)[1] == ext:
                 self.skip_exts_simple.add(ext)
             else:
                 self.skip_exts_endswith.append(ext)
@@ -636,7 +690,7 @@ class FileRecognizer:
         -------
         is_binary : bool
         """
-        with open(filename, 'rb') as fp:
+        with open(filename, "rb") as fp:
             return self._is_binary_file(fp)
 
     def _is_binary_file(self, f):
@@ -673,7 +727,7 @@ class FileRecognizer:
         is_gzipped_text : bool
         """
         is_gzipped_text = False
-        with open(filename, 'rb') as fp:
+        with open(filename, "rb") as fp:
             marker = fp.read(2)
 
         if marker == GZIP_MAGIC:
@@ -732,50 +786,54 @@ class FileRecognizer:
                 # We're only interested in regular files and directories.
                 # A named pipe in particular would be problematic, because
                 # it would cause open() to hang indefinitely.
-                return 'skip'
+                return "skip"
         except OSError:
-            return 'unreadable'
+            return "unreadable"
 
     def recognize_directory(self, filename):
         """ Determine what to do with a directory.
         """
         basename = os.path.split(filename)[-1]
-        if (self.skip_hidden_dirs and basename.startswith('.') and basename not in ('.', '..')):
-            return 'skip'
+        if (
+            self.skip_hidden_dirs
+            and basename.startswith(".")
+            and basename not in (".", "..")
+        ):
+            return "skip"
         if self.skip_symlink_dirs and os.path.islink(filename):
-            return 'link'
+            return "link"
         if basename in self.skip_dirs:
-            return 'skip'
-        return 'directory'
+            return "skip"
+        return "directory"
 
     def recognize_file(self, filename):
         """ Determine what to do with a file.
         """
         basename = os.path.split(filename)[-1]
-        if self.skip_hidden_files and basename.startswith('.'):
-            return 'skip'
-        if self.skip_backup_files and basename.endswith('~'):
-            return 'skip'
+        if self.skip_hidden_files and basename.startswith("."):
+            return "skip"
+        if self.skip_backup_files and basename.endswith("~"):
+            return "skip"
         if self.skip_symlink_files and os.path.islink(filename):
-            return 'link'
+            return "link"
 
         filename_nc = os.path.normcase(filename)
         ext = os.path.splitext(filename_nc)[1]
-        if ext in self.skip_exts_simple or ext.startswith('.~'):
-            return 'skip'
+        if ext in self.skip_exts_simple or ext.startswith(".~"):
+            return "skip"
         for ext in self.skip_exts_endswith:
             if filename_nc.endswith(ext):
-                return 'skip'
+                return "skip"
         try:
             if self.is_binary(filename):
                 if self.is_gzipped_text(filename):
-                    return 'gzip'
+                    return "gzip"
                 else:
-                    return 'binary'
+                    return "binary"
             else:
-                return 'text'
+                return "text"
         except (OSError, IOError):
-            return 'unreadable'
+            return "unreadable"
 
     def walk(self, startpath):
         """ Walk the tree from a given start path yielding all of the files (not
@@ -794,11 +852,11 @@ class FileRecognizer:
         kind : str
         """
         kind = self.recognize(startpath)
-        if kind in ('binary', 'text', 'gzip'):
+        if kind in ("binary", "text", "gzip"):
             yield startpath, kind
             # Not a directory, so there is no need to recurse.
             return
-        elif kind == 'directory':
+        elif kind == "directory":
             try:
                 basenames = os.listdir(startpath)
             except OSError:
@@ -820,197 +878,215 @@ def get_grin_arg_parser(parser=None):
         )
 
     parser.add_argument(
-        '-v', '--version',
-        action='version',
-        version='grin %s' % __version__,
+        "-v",
+        "--version",
+        action="version",
+        version="grin %s" % __version__,
         help="show program's version number and exit",
     )
     parser.add_argument(
-        '-i', '--ignore-case',
-        action='append_const',
-        dest='re_flags',
+        "-i",
+        "--ignore-case",
+        action="append_const",
+        dest="re_flags",
         const=re.I,
         default=[],
         help="ignore case in the regex",
     )
     parser.add_argument(
-        '-A', '--after-context',
+        "-A",
+        "--after-context",
         default=0,
         type=int,
         help="the number of lines of context to show after the match [default=%(default)r]",
     )
     parser.add_argument(
-        '-B', '--before-context',
+        "-B",
+        "--before-context",
         default=0,
         type=int,
         help="the number of lines of context to show before the match [default=%(default)r]",
     )
     parser.add_argument(
-        '-C', '--context',
+        "-C",
+        "--context",
         type=int,
         help="the number of lines of context to show on either side of the match",
     )
     parser.add_argument(
-        '-I', '--include',
-        default='*',
+        "-I",
+        "--include",
+        default="*",
         help="only search in files matching this glob [default=%(default)r]",
     )
     parser.add_argument(
-        '-n', '--line-number',
-        action='store_true',
-        dest='show_line_numbers',
+        "-n",
+        "--line-number",
+        action="store_true",
+        dest="show_line_numbers",
         default=True,
         help="show the line numbers [default]",
     )
     parser.add_argument(
-        '-N', '--no-line-number',
-        action='store_false',
-        dest='show_line_numbers',
+        "-N",
+        "--no-line-number",
+        action="store_false",
+        dest="show_line_numbers",
         help="do not show the line numbers",
     )
     parser.add_argument(
-        '-H', '--with-filename',
-        action='store_true',
-        dest='show_filename',
+        "-H",
+        "--with-filename",
+        action="store_true",
+        dest="show_filename",
         default=True,
         help="show the filenames of files that match [default]",
     )
     parser.add_argument(
-        '--without-filename',
-        action='store_false',
-        dest='show_filename',
+        "--without-filename",
+        action="store_false",
+        dest="show_filename",
         help="do not show the filenames of files that match",
     )
     parser.add_argument(
-        '--emacs',
-        action='store_true',
-        dest='show_emacs',
+        "--emacs",
+        action="store_true",
+        dest="show_emacs",
         help="print the filename with every match for easier parsing by e.g. Emacs",
     )
     parser.add_argument(
-        '-l', '--files-with-matches',
-        action='store_false',
-        dest='show_match',
+        "-l",
+        "--files-with-matches",
+        action="store_false",
+        dest="show_match",
         help="show only the filenames and not the texts of the matches",
     )
     parser.add_argument(
-        '-L', '--files-without-matches',
-        action='store_true',
-        dest='show_match',
+        "-L",
+        "--files-without-matches",
+        action="store_true",
+        dest="show_match",
         default=False,
         help="show the matches with the filenames",
     )
     parser.add_argument(
-        '--no-color',
-        action='store_true',
-        default=sys.platform == 'win32',
+        "--no-color",
+        action="store_true",
+        default=sys.platform == "win32",
         help="do not use colorized output [default if piping the output]",
     )
     parser.add_argument(
-        '--use-color',
-        action='store_false',
-        dest='no_color',
+        "--use-color",
+        action="store_false",
+        dest="no_color",
         help="use colorized output [default if outputting to a terminal]",
     )
     parser.add_argument(
-        '--force-color',
-        action='store_true',
+        "--force-color",
+        action="store_true",
         help="always use colorized output even when piping to something that may not be able to handle it",
     )
     parser.add_argument(
-        '-s', '--no-skip-hidden-files',
-        dest='skip_hidden_files',
-        action='store_false',
+        "-s",
+        "--no-skip-hidden-files",
+        dest="skip_hidden_files",
+        action="store_false",
         help="do not skip .hidden files",
     )
     parser.add_argument(
-        '--skip-hidden-files',
-        dest='skip_hidden_files',
-        action='store_true',
+        "--skip-hidden-files",
+        dest="skip_hidden_files",
+        action="store_true",
         default=True,
         help="do skip .hidden files [default]",
     )
     parser.add_argument(
-        '-b', '--no-skip-backup-files',
-        dest='skip_backup_files',
-        action='store_false',
+        "-b",
+        "--no-skip-backup-files",
+        dest="skip_backup_files",
+        action="store_false",
         help="do not skip backup~ files [deprecated; edit --skip-exts]",
     )
     parser.add_argument(
-        '--skip-backup-files',
-        dest='skip_backup_files',
-        action='store_true',
+        "--skip-backup-files",
+        dest="skip_backup_files",
+        action="store_true",
         default=True,
         help="do skip backup~ files [default] [deprecated; edit --skip-exts]",
     )
     parser.add_argument(
-        '-S', '--no-skip-hidden-dirs',
-        dest='skip_hidden_dirs',
-        action='store_false',
+        "-S",
+        "--no-skip-hidden-dirs",
+        dest="skip_hidden_dirs",
+        action="store_false",
         help="do not skip .hidden directories",
     )
     parser.add_argument(
-        '--skip-hidden-dirs',
-        dest='skip_hidden_dirs',
+        "--skip-hidden-dirs",
+        dest="skip_hidden_dirs",
         default=True,
-        action='store_true',
+        action="store_true",
         help="do skip .hidden directories [default]",
     )
     parser.add_argument(
-        '-d', '--skip-dirs',
-        default='CVS,RCS,.svn,.hg,.bzr,build,dist',
+        "-d",
+        "--skip-dirs",
+        default="CVS,RCS,.svn,.hg,.bzr,build,dist",
         help="comma-separated list of directory names to skip [default=%(default)r]",
     )
     parser.add_argument(
-        '-D', '--no-skip-dirs',
-        dest='skip_dirs',
-        action='store_const',
-        const='',
+        "-D",
+        "--no-skip-dirs",
+        dest="skip_dirs",
+        action="store_const",
+        const="",
         help="do not skip any directories",
     )
     parser.add_argument(
-        '-e', '--skip-exts',
-        default='.pyc,.pyo,.so,.o,.a,.tgz,.tar.gz,.rar,.zip,~,#,.bak,.png,.jpg,.gif,.bmp,.tif,.tiff,.pyd,.dll,.exe,.obj,.lib',  # noqa: E501
+        "-e",
+        "--skip-exts",
+        default=".pyc,.pyo,.so,.o,.a,.tgz,.tar.gz,.rar,.zip,~,#,.bak,.png,.jpg,.gif,.bmp,.tif,.tiff,.pyd,.dll,.exe,.obj,.lib",  # noqa: E501
         help="comma-separated list of file extensions to skip [default=%(default)r]",
     )
     parser.add_argument(
-        '-E', '--no-skip-exts',
-        dest='skip_exts',
-        action='store_const',
-        const='',
+        "-E",
+        "--no-skip-exts",
+        dest="skip_exts",
+        action="store_const",
+        const="",
         help="do not skip any file extensions",
     )
     parser.add_argument(
-        '--no-follow',
-        action='store_false',
-        dest='follow_symlinks',
+        "--no-follow",
+        action="store_false",
+        dest="follow_symlinks",
         default=False,
         help="do not follow symlinks to directories and files [default]",
     )
     parser.add_argument(
-        '--follow',
-        action='store_true',
-        dest='follow_symlinks',
+        "--follow",
+        action="store_true",
+        dest="follow_symlinks",
         help="follow symlinks to directories and files",
     )
     parser.add_argument(
-        '-f', '--files-from-file',
+        "-f",
+        "--files-from-file",
         metavar="FILE",
         help="read files to search from a file, one per line; - for stdin",
     )
     parser.add_argument(
-        '-0', '--null-separated',
-        action='store_true',
+        "-0",
+        "--null-separated",
+        action="store_true",
         help="filenames specified in --files-from-file are separated by NULs",
     )
     parser.add_argument(
-        '--sys-path',
-        action='store_true',
-        help="search the directories on sys.path",
+        "--sys-path", action="store_true", help="search the directories on sys.path"
     )
 
-    parser.add_argument('regex', help="the regular expression to search for")
-    parser.add_argument('files', nargs='*', help="the files to search")
+    parser.add_argument("regex", help="the regular expression to search for")
+    parser.add_argument("files", nargs="*", help="the files to search")
 
     return parser
 
@@ -1025,108 +1101,112 @@ def get_grind_arg_parser(parser=None):
         )
 
     parser.add_argument(
-        '-v', '--version',
-        action='version',
-        version='grin %s' % __version__,
+        "-v",
+        "--version",
+        action="version",
+        version="grin %s" % __version__,
         help="show program's version number and exit",
     )
     parser.add_argument(
-        '-s', '--no-skip-hidden-files',
-        dest='skip_hidden_files',
-        action='store_false',
+        "-s",
+        "--no-skip-hidden-files",
+        dest="skip_hidden_files",
+        action="store_false",
         help="do not skip .hidden files",
     )
     parser.add_argument(
-        '--skip-hidden-files',
-        dest='skip_hidden_files',
-        action='store_true',
+        "--skip-hidden-files",
+        dest="skip_hidden_files",
+        action="store_true",
         default=True,
         help="do skip .hidden files",
     )
     parser.add_argument(
-        '-b', '--no-skip-backup-files',
-        dest='skip_backup_files',
-        action='store_false',
+        "-b",
+        "--no-skip-backup-files",
+        dest="skip_backup_files",
+        action="store_false",
         help="do not skip backup~ files [deprecated; edit --skip-exts]",
     )
     parser.add_argument(
-        '--skip-backup-files',
-        dest='skip_backup_files',
-        action='store_true',
+        "--skip-backup-files",
+        dest="skip_backup_files",
+        action="store_true",
         default=True,
         help="do skip backup~ files [default] [deprecated; edit --skip-exts]",
     )
     parser.add_argument(
-        '-S', '--no-skip-hidden-dirs',
-        dest='skip_hidden_dirs',
-        action='store_false',
+        "-S",
+        "--no-skip-hidden-dirs",
+        dest="skip_hidden_dirs",
+        action="store_false",
         help="do not skip .hidden directories",
     )
     parser.add_argument(
-        '--skip-hidden-dirs',
-        dest='skip_hidden_dirs',
+        "--skip-hidden-dirs",
+        dest="skip_hidden_dirs",
         default=True,
-        action='store_true',
+        action="store_true",
         help="do skip .hidden directories",
     )
     parser.add_argument(
-        '-d', '--skip-dirs',
-        default='CVS,RCS,.svn,.hg,.bzr,build,dist',
+        "-d",
+        "--skip-dirs",
+        default="CVS,RCS,.svn,.hg,.bzr,build,dist",
         help="comma-separated list of directory names to skip [default=%(default)r]",
     )
     parser.add_argument(
-        '-D', '--no-skip-dirs',
-        dest='skip_dirs',
-        action='store_const',
-        const='',
+        "-D",
+        "--no-skip-dirs",
+        dest="skip_dirs",
+        action="store_const",
+        const="",
         help="do not skip any directories",
     )
     parser.add_argument(
-        '-e', '--skip-exts',
-        default='.pyc,.pyo,.so,.o,.a,.tgz,.tar.gz,.rar,.zip,~,#,.bak,.png,.jpg,.gif,.bmp,.tif,.tiff,.pyd,.dll,.exe,.obj,.lib',  # noqa: E501
+        "-e",
+        "--skip-exts",
+        default=".pyc,.pyo,.so,.o,.a,.tgz,.tar.gz,.rar,.zip,~,#,.bak,.png,.jpg,.gif,.bmp,.tif,.tiff,.pyd,.dll,.exe,.obj,.lib",  # noqa: E501
         help="comma-separated list of file extensions to skip [default=%(default)r]",
     )
     parser.add_argument(
-        '-E', '--no-skip-exts',
-        dest='skip_exts',
-        action='store_const',
-        const='',
+        "-E",
+        "--no-skip-exts",
+        dest="skip_exts",
+        action="store_const",
+        const="",
         help="do not skip any file extensions",
     )
     parser.add_argument(
-        '--no-follow',
-        action='store_false',
-        dest='follow_symlinks',
+        "--no-follow",
+        action="store_false",
+        dest="follow_symlinks",
         default=False,
         help="do not follow symlinks to directories and files [default]",
     )
     parser.add_argument(
-        '--follow',
-        action='store_true',
-        dest='follow_symlinks',
+        "--follow",
+        action="store_true",
+        dest="follow_symlinks",
         help="follow symlinks to directories and files",
     )
     parser.add_argument(
-        '-0', '--null-separated',
-        action='store_true',
+        "-0",
+        "--null-separated",
+        action="store_true",
         help="print the filenames separated by NULs",
     )
     parser.add_argument(
-        '--dirs',
-        nargs='+',
-        default=["."],
-        help="the directories to start from",
+        "--dirs", nargs="+", default=["."], help="the directories to start from"
     )
     parser.add_argument(
-        '--sys-path',
-        action='store_true',
-        help="search the directories on sys.path",
+        "--sys-path", action="store_true", help="search the directories on sys.path"
     )
 
     parser.add_argument(
-        'glob',
-        default='*',
-        nargs='?',
+        "glob",
+        default="*",
+        nargs="?",
         help="the glob pattern to match; you may need to quote this to prevent the shell from trying to expand it [default=%(default)r]",  # noqa: E501
     )
 
@@ -1137,8 +1217,8 @@ def get_recognizer(args):
     """ Get the file recognizer object from the configured options.
     """
     # Make sure we have empty sets when we have empty strings.
-    skip_dirs = set([x for x in args.skip_dirs.split(',') if x])
-    skip_exts = set([x for x in args.skip_exts.split(',') if x])
+    skip_dirs = set([x for x in args.skip_dirs.split(",") if x])
+    skip_exts = set([x for x in args.skip_exts.split(",") if x])
     fr = FileRecognizer(
         skip_hidden_files=args.skip_hidden_files,
         skip_backup_files=args.skip_backup_files,
@@ -1172,14 +1252,14 @@ def get_filenames(args):
     files = []
     # If the user has given us a file with filenames, consume them first.
     if args.files_from_file is not None:
-        if args.files_from_file == '-':
+        if args.files_from_file == "-":
             files_file = sys.stdin
             should_close = False
         elif os.path.exists(args.files_from_file):
             files_file = open(args.files_from_file)
             should_close = True
         else:
-            raise IOError(2, 'No such file: %r' % args.files_from_file)
+            raise IOError(2, "No such file: %r" % args.files_from_file)
 
         try:
             # Remove ''
@@ -1187,7 +1267,7 @@ def get_filenames(args):
             # grin -f against a binary file and got an unhelpful error message
             # later.
             if args.null_separated:
-                files.extend([x.strip() for x in files_file.read().split('\0')])
+                files.extend([x.strip() for x in files_file.read().split("\0")])
             else:
                 files.extend([x.strip() for x in files_file])
         finally:
@@ -1201,31 +1281,35 @@ def get_filenames(args):
     # Make sure we don't have any empty strings lying around.
     # Also skip certain special null files which may be added by programs like
     # Emacs.
-    if sys.platform == 'win32':
-        upper_bad = set(['NUL:', 'NUL'])
-        raw_bad = set([''])
+    if sys.platform == "win32":
+        upper_bad = set(["NUL:", "NUL"])
+        raw_bad = set([""])
     else:
         upper_bad = set()
-        raw_bad = set(['', '/dev/null'])
+        raw_bad = set(["", "/dev/null"])
     files = [fn for fn in files if fn not in raw_bad and fn.upper() not in upper_bad]
     if len(files) == 0:
         # Add the current directory at least.
-        files = ['.']
+        files = ["."]
 
     # Go over our list of filenames and see if we can recognize each as
     # something we want to grep.
     fr = get_recognizer(args)
     for fn in files:
         # Special case text stdin.
-        if fn == '-':
-            yield fn, 'text'
+        if fn == "-":
+            yield fn, "text"
             continue
         kind = fr.recognize(fn)
-        if kind in ('text', 'gzip') and fnmatch.fnmatch(os.path.basename(fn), args.include):
+        if kind in ("text", "gzip") and fnmatch.fnmatch(
+            os.path.basename(fn), args.include
+        ):
             yield fn, kind
-        elif kind == 'directory':
+        elif kind == "directory":
             for filename, k in fr.walk(fn):
-                if k in ('text', 'gzip') and fnmatch.fnmatch(os.path.basename(filename), args.include):
+                if k in ("text", "gzip") and fnmatch.fnmatch(
+                    os.path.basename(filename), args.include
+                ):
                     yield filename, k
         # XXX: warn about other files?
         # XXX: handle binary?
@@ -1245,7 +1329,7 @@ def grin_main(argv=None):
     try:
         if argv is None:
             # Look at the GRIN_ARGS environment variable for more arguments.
-            env_args = shlex.split(os.getenv('GRIN_ARGS', ''))
+            env_args = shlex.split(os.getenv("GRIN_ARGS", ""))
             argv = [sys.argv[0]] + env_args + sys.argv[1:]
         parser = get_grin_arg_parser()
         args = parser.parse_args(argv[1:])
@@ -1253,7 +1337,11 @@ def grin_main(argv=None):
             args.before_context = args.context
             args.after_context = args.context
 
-        use_term_color = not args.no_color and sys.stdout.isatty() and (os.environ.get('TERM') != 'dumb')
+        use_term_color = (
+            not args.no_color
+            and sys.stdout.isatty()
+            and (os.environ.get("TERM") != "dumb")
+        )
         args.use_color = args.force_color or use_term_color
 
         regex = get_regex(args)
@@ -1265,7 +1353,7 @@ def grin_main(argv=None):
     except KeyboardInterrupt:
         raise SystemExit(0)
     except IOError as e:
-        if 'Broken pipe' in str(e):
+        if "Broken pipe" in str(e):
             # The user is probably piping to a pager like less(1) and has exited
             # it. Just exit.
             raise SystemExit(0)
@@ -1276,14 +1364,14 @@ def print_null(filename):
     # Note that the final filename will have a trailing NUL, just like
     # "find -print0" does.
     sys.stdout.write(filename)
-    sys.stdout.write('\0')
+    sys.stdout.write("\0")
 
 
 def grind_main(argv=None):
     try:
         if argv is None:
             # Look at the GRIND_ARGS environment variable for more arguments.
-            env_args = shlex.split(os.getenv('GRIND_ARGS', ''))
+            env_args = shlex.split(os.getenv("GRIND_ARGS", ""))
             argv = [sys.argv[0]] + env_args + sys.argv[1:]
         parser = get_grind_arg_parser()
         args = parser.parse_args(argv[1:])
@@ -1305,12 +1393,12 @@ def grind_main(argv=None):
     except KeyboardInterrupt:
         raise SystemExit(0)
     except IOError as e:
-        if 'Broken pipe' in str(e):
+        if "Broken pipe" in str(e):
             # The user is probably piping to a pager like less(1) and has exited
             # it. Just exit.
             raise SystemExit(0)
         raise
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     grin_main()
