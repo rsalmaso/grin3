@@ -1,0 +1,9 @@
+[tool.black]
+exclude = '''
+/(
+  __pycache__
+)/
+'''
+line-length = 120
+safe = true
+target-version = ['py33']
