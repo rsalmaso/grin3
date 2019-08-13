@@ -5,4 +5,4 @@ exclude = '''
 )/
 '''
 safe = true
-target-version = ['py33']
+target-version = ['py35']
