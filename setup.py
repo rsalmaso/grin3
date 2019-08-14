@@ -36,6 +36,4 @@ setup(
     entry_points=dict(
         console_scripts=["grin = grin.grin:main", "grind = grin.grind:main"]
     ),
-    tests_require=["nose >= 0.10"],
-    test_suite="nose.collector",
 )
