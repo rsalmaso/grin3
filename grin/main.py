@@ -103,7 +103,6 @@ class GrepText:
             is_last_block = target_io_size == remaining
 
         if not isinstance(block_main, str):
-            # python3: ensure string are returned
             block_main = to_str(block_main)
 
         if prev is None:
@@ -145,7 +144,7 @@ class GrepText:
             curr_block = (
                 prev.data[prev.end :]
                 + block_main
-                + ("" if is_last_block else fp.readline())
+                + ("" if is_last_block else to_str(fp.readline()))
             )
         except TypeError as ex:
             print(ex)
@@ -157,7 +156,7 @@ class GrepText:
             after_lines = ""
         else:
             after_lines_list = [
-                fp.readline() for i in range(self.options.after_context)
+                to_str(fp.readline()) for i in range(self.options.after_context)
             ]
             after_lines = "".join(after_lines_list)
 
