@@ -66,25 +66,24 @@ Installation
 
 Install using pip_::
 
-  $ pip install grin
+  $ python3 -m pip install grin3
 
 Running the unittests requires the nose_ framework::
 
-  $ pip install nose
-  ...
-  $ nosetests 
-  .........................
+  $ python3 -m unittest discover tests
   ----------------------------------------------------------------------
-  Ran 25 tests in 0.192s
+  Ran 24 tests in 0.010s
 
   OK
-  $ python setup.py test   # The other way to run the tests.
-  running test
-  ... etc.
 
-The development sources are hosted on Github:
+The development sources are hosted on Bitbucket:
 
-  https://github.com/rkern/grin
+  https://bitbucket.org/rsalmaso/grin3
+
+with mirrors on
+
+  https://github.com/rsalmaso/grin3
+  https://gitlab.com/rsalmaso/grin3
 
 There is one little tweak to the installation that you may want to consider. By
 default, setuptools installs scripts indirectly; the scripts installed to
@@ -200,7 +199,7 @@ Using grin as a Library
 -----------------------
 
 One of the goals I had when writing grin was to be able to use it as a library
-to write custom tools. You can see one example that I quickly hacked up in 
+to write custom tools. You can see one example that I quickly hacked up in
 examples/grinimports.py . It reuses almost all of grin's infrastructure, except
 that it preprocesses Python files to extract and normalize just the import
 statements. This lets you conveniently and robustly search for import
