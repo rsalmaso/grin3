@@ -1,5 +1,6 @@
 syntax: regexp
 .tox/
+.vagrant/
 build/
 dist/
 grin3.egg-info/
