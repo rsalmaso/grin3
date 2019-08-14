@@ -1,4 +1,5 @@
 syntax: regexp
+.tox/
 build/
 dist/
 grin3.egg-info/
