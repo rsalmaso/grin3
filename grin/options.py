@@ -25,42 +25,35 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-VERSION = (1, 2, 3, "final", 0)
+__all__ = ["default_options", "Options"]
 
 
-def get_version(version=None):
-    "Returns a PEP 386-compliant version number from VERSION."
-    assert len(version) == 5
-    assert version[3] in ("alpha", "beta", "rc", "final")
+class Options(dict):
+    """ Simple options.
+    """
 
-    # Now build the two parts of the version number:
-    # main = X.Y[.Z]
-    # sub = .devN - for pre-alpha releases
-    #     | {a|b|c}N - for alpha, beta and rc releases
-
-    parts = 2 if version[2] == 0 else 3
-    main = ".".join(str(x) for x in version[:parts])
-
-    sub = ""
-
-    if version[3] != "final":
-        mapping = {"alpha": "a", "beta": "b", "rc": "c"}
-        sub = mapping[version[3]] + str(version[4])
-
-    return str(main + sub)
+    def __init__(self, *args, **kwds):
+        dict.__init__(self, *args, **kwds)
+        self.__dict__ = self
 
 
-# Constants
-__version__ = get_version(VERSION)
-__author__ = "Robert Kern"
-__author_email__ = "robert.kern@enthought.com"
-__maintainer__ = "Raffaele Salmaso"
-__maintainer_email__ = "raffaele@salmaso.org"
-
-
-from .grin import get_filenames, get_grin_arg_parser  # noqa: F401
-from .grind import get_grind_arg_parser  # noqa: F401
-from .main import GrepText  # noqa: F401
-from .options import Options, default_options  # noqa: F401
-from .recognizer import GZIP_MAGIC, FileRecognizer, get_recognizer  # noqa: F401
-from .utils import get_line_offsets, get_regex, is_binary_string  # noqa: F401
+def default_options():
+    """ Populate the default options.
+    """
+    opt = Options(
+        before_context=0,
+        after_context=0,
+        show_line_numbers=True,
+        show_match=True,
+        show_filename=True,
+        show_emacs=False,
+        skip_hidden_dirs=False,
+        skip_hidden_files=False,
+        skip_backup_files=True,
+        skip_dirs=set(),
+        skip_exts=set(),
+        skip_symlink_dirs=True,
+        skip_symlink_files=True,
+        binary_bytes=4096,
+    )
+    return opt
