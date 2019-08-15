@@ -3,8 +3,20 @@ files, primarily source code.
 
  Download:     http://pypi.python.org/pypi/grin3
  Hg:           https://bitbucket.org/rsalmaso/grin3
- Git (mirror): https://bitbucket.org/rsalmaso/grin3
+ Git (mirror): https://github.com/rsalmaso/grin3
+ Git (mirror): https://gitlab.com/rsalmaso/grin3
  License:      BSD
+
+grin 2.0.0 is a bug-fix release.
+
+  * refactor code into a module
+  * refactor test code from nose to unittest
+  * add Vagrant configuration
+  * add tox support
+  * adopt black formatter
+  * removed TypeError
+  * drop python3.4 support
+  * added support for python3.7 and python3.8 (dev)
 
 grin 1.2.3 is a bug-fix release.
 
