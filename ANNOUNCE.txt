@@ -7,6 +7,11 @@ files, primarily source code.
  Git (mirror): https://gitlab.com/rsalmaso/grin3
  License:      BSD
 
+grin 2.0.1 is a bug-fix release.
+
+  * fix setup and wheel build
+  * update docs
+
 grin 2.0.0 is a bug-fix release.
 
   * refactor code into a module
