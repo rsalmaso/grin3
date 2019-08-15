@@ -2,6 +2,8 @@
 grin
 ====
 
+[this is a port of original grin to python3]
+
 I wrote grin to help me search directories full of source code. The venerable
 GNU grep_ and find_ are great tools, but they fall just a little short for my
 normal use cases.
@@ -68,7 +70,7 @@ Install using pip_::
 
   $ python3 -m pip install grin3
 
-Running the unittests requires the nose_ framework::
+Running the tests::
 
   $ python3 -m unittest discover tests
   ----------------------------------------------------------------------
@@ -76,18 +78,10 @@ Running the unittests requires the nose_ framework::
 
   OK
 
-The development sources are hosted on Bitbucket:
-
-  https://bitbucket.org/rsalmaso/grin3
-
-with mirrors on
-
-  https://github.com/rsalmaso/grin3
-  https://gitlab.com/rsalmaso/grin3
 
 There is one little tweak to the installation that you may want to consider. By
 default, setuptools installs scripts indirectly; the scripts installed to
-$prefix/bin or Python2x\Scripts use setuptools' pkg_resources module to load
+$prefix/bin or Python3x\Scripts use setuptools' pkg_resources module to load
 the exact version of grin egg that installed the script, then runs the script's
 main() function. This is not usually a bad feature, but it can add substantial
 startup overhead for a small command-line utility like grin. If you want the
@@ -96,7 +90,6 @@ import the grin module and run the appropriate main() function. See the files
 examples/grin and examples/grind for examples.
 
 .. _pip : https://pip.pypa.io/en/stable/
-.. _nose : https://nose.readthedocs.org/en/latest/
 
 
 Using grin
@@ -227,19 +220,63 @@ Similarly, it should be straightforward to write small tools like this which
 extract and search text metadata from binary files.
 
 
+Development, bugs and such
+--------------------------
+
+The development sources are hosted on Bitbucket (in mercurial format):
+
+  https://bitbucket.org/rsalmaso/grin3
+
+and in git mirrors on
+
+  https://github.com/rsalmaso/grin3
+
+  https://gitlab.com/rsalmaso/grin3
+
+You are free to open a PR/MR/Bug where you want.
+
+The source code is formatted with `black_`, `isort_` and `flake8_`
+
+.. _black : https://pypi.org/project/black/
+.. _isort : https://pypi.org/project/isort/
+.. _flake8 : https://pypi.org/project/flake8/
+
+
+Testing
+-------
+
+tests
+~~~~~
+
+Running unittests::
+
+  $ python3 -m unittest discover tests
+  ----------------------------------------------------------------------
+  Ran 24 tests in 0.010s
+
+  OK
+
+tox
+~~~
+
+Run all tests into dedicated virtualenvs, and check code style.
+
+vagrant
+~~~~~~~
+
+There is a simple vagrant config to install a preconfigured system with everything needed to run tests locally.
+
+Just run::
+
+  $ vagrant up
+  # and wait for provisioning
+  $ vagrant ssh
+  $ tox -e ALL
+
+It will run all tests suite on all supported python versions
+
+
 To Do
 -----
 
 * Figure out the story for grepping UTF-8, UTF-16 and UTF-32 Unicode text files.
-
-
-Bugs and Such
--------------
-
-Please make a new issue at the Bitbucket issue tracker
-
-  https://bitbucket.org/rsalmaso/grin3
-
-or on the Github mirror
-
-  https://github.com/rsalmaso/grin3
