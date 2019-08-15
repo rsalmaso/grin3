@@ -4,8 +4,10 @@ syntax: regexp
 build/
 dist/
 grin3.egg-info/
+pip-wheel-metadata/
 ^\.venv/
 ^\.idea
+__pycache__
 
 syntax: glob
 *~
@@ -15,4 +17,3 @@ syntax: glob
 *.pyc
 *.kpf
 *.orig
-*.bak

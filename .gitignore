@@ -3,6 +3,13 @@
 build/
 dist/
 grin3.egg-info/
+pip-wheel-metadata/
 .venv/
+.idea/
+__pycache__
 *~
+*-
+*.swp
 *.bak
+*.pyc
+*.orig
