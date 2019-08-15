@@ -1,7 +1,7 @@
 import io
 
 import grin
-from setuptools import setup
+from setuptools import find_packages, setup
 
 # Read the long description from the README.txt
 with io.open("README.rst", "rt") as f:
@@ -32,7 +32,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Topic :: Utilities",
     ],
-    py_modules=["grin"],
+    packages=find_packages(),
     entry_points=dict(
         console_scripts=["grin = grin.grin:main", "grind = grin.grind:main"]
     ),
