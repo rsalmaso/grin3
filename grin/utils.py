@@ -38,7 +38,7 @@ ALLBYTES = bytes(range(256))
 def to_str(s):
     if isinstance(s, str):
         return s
-    return s.decode("utf-8")
+    return s.decode("latin1")
 
 
 def is_binary_string(bytes):
