@@ -112,7 +112,7 @@ def get_grind_arg_parser(parser=None):
     parser.add_argument(
         "-e",
         "--skip-exts",
-        default=".pyc,.pyo,.so,.o,.a,.tgz,.tar.gz,.rar,.zip,~,#,.bak,.png,.jpg,.gif,.bmp,.tif,.tiff,.pyd,.dll,.exe,.obj,.lib",  # noqa: E501
+        default=".pyc,.pyo,.so,.o,.a,.tgz,.tar.gz,.rar,.zip,~,#,.bak,.png,.jpg,.gif,.bmp,.tif,.tiff,.pyd,.dll,.exe,.obj,.lib,.class",  # noqa: E501
         help="comma-separated list of file extensions to skip [default=%(default)r]",
     )
     parser.add_argument(
