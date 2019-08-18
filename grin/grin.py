@@ -298,7 +298,7 @@ def get_grin_arg_parser(parser=None):
     parser.add_argument(
         "-d",
         "--skip-dirs",
-        default="CVS,RCS,.svn,.hg,.bzr,build,dist,target",
+        default="CVS,RCS,.svn,.hg,.bzr,build,dist,target,node_modules",
         help="comma-separated list of directory names to skip [default=%(default)r]",
     )
     parser.add_argument(
