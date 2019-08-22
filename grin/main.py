@@ -68,7 +68,7 @@ class GrepText:
 
         # The options object from parsing the configuration and command line.
         if options is None:
-            options = default_options()
+            options = default_options
         self.options = options
 
     def read_block_with_context(self, prev, fp, fp_size):

@@ -26,6 +26,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 __all__ = ["default_options", "Options"]
+import warnings
 
 
 class Options(dict):
@@ -36,24 +37,27 @@ class Options(dict):
         dict.__init__(self, *args, **kwds)
         self.__dict__ = self
 
+    def __call__(self):
+        warnings.warn(
+            "calling default_options is deprecated, it will removed in next version.",
+            DeprecationWarning,
+        )
+        return self
 
-def default_options():
-    """ Populate the default options.
-    """
-    opt = Options(
-        before_context=0,
-        after_context=0,
-        show_line_numbers=True,
-        show_match=True,
-        show_filename=True,
-        show_emacs=False,
-        skip_hidden_dirs=False,
-        skip_hidden_files=False,
-        skip_backup_files=True,
-        skip_dirs=set(),
-        skip_exts=set(),
-        skip_symlink_dirs=True,
-        skip_symlink_files=True,
-        binary_bytes=4096,
-    )
-    return opt
+
+default_options = Options(
+    before_context=0,
+    after_context=0,
+    show_line_numbers=True,
+    show_match=True,
+    show_filename=True,
+    show_emacs=False,
+    skip_hidden_dirs=False,
+    skip_hidden_files=False,
+    skip_backup_files=True,
+    skip_dirs=set(),
+    skip_exts=set(),
+    skip_symlink_dirs=True,
+    skip_symlink_files=True,
+    binary_bytes=4096,
+)
