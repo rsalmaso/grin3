@@ -238,205 +238,205 @@ class FilesTextCase(TestCase):
 
     # This class tests what the recognizer does if no DirEntry is provided.
     # These are overridden in FilesTextCase_DirEntry to provide DirEntry's.
-    def _recognize(self, filename):
-        return self.fr.recognize(filename, None)
+    def _recognize(self, filename, fr):
+        return fr.recognize(filename, None)
 
-    def _recognize_file(self, filename):
-        return self.fr.recognize(filename, None)
+    def _recognize_file(self, filename, fr):
+        return fr.recognize(filename, None)
 
-    def _recognize_directory(self, dirname):
-        return self.fr.recognize_directory(dirname, None)
+    def _recognize_directory(self, dirname, fr):
+        return fr.recognize_directory(dirname, None)
 
     def test_binary(self):
-        self.fr = fr = FileRecognizer()
+        fr = FileRecognizer()
         self.assertTrue(fr.is_binary("binary"))
-        self.assertEqual(self._recognize_file("binary"), "binary")
-        self.assertEqual(self._recognize("binary"), "binary")
+        self.assertEqual(self._recognize_file("binary", fr), "binary")
+        self.assertEqual(self._recognize("binary", fr), "binary")
 
     def test_text(self):
-        self.fr = fr = FileRecognizer()
+        fr = FileRecognizer()
         self.assertFalse(fr.is_binary("text"))
-        self.assertEqual(self._recognize_file("text"), "text")
-        self.assertEqual(self._recognize("text"), "text")
+        self.assertEqual(self._recognize_file("text", fr), "text")
+        self.assertEqual(self._recognize("text", fr), "text")
 
     def test_gzipped(self):
-        self.fr = fr = FileRecognizer()
+        fr = FileRecognizer()
         self.assertTrue(fr.is_binary("text.gz"))
-        self.assertEqual(self._recognize_file("text.gz"), "gzip")
-        self.assertEqual(self._recognize("text.gz"), "gzip")
+        self.assertEqual(self._recognize_file("text.gz", fr), "gzip")
+        self.assertEqual(self._recognize("text.gz", fr), "gzip")
         self.assertTrue(fr.is_binary("binary.gz"))
-        self.assertEqual(self._recognize_file("binary.gz"), "binary")
-        self.assertEqual(self._recognize("binary.gz"), "binary")
+        self.assertEqual(self._recognize_file("binary.gz", fr), "binary")
+        self.assertEqual(self._recognize("binary.gz", fr), "binary")
         self.assertTrue(fr.is_binary("fake.gz"))
-        self.assertEqual(self._recognize_file("fake.gz"), "binary")
-        self.assertEqual(self._recognize("fake.gz"), "binary")
+        self.assertEqual(self._recognize_file("fake.gz", fr), "binary")
+        self.assertEqual(self._recognize("fake.gz", fr), "binary")
 
     def test_binary_middle(self):
-        self.fr = fr = FileRecognizer(binary_bytes=100)
+        fr = FileRecognizer(binary_bytes=100)
         self.assertFalse(fr.is_binary("binary_middle"))
-        self.assertEqual(self._recognize_file("binary_middle"), "text")
-        self.assertEqual(self._recognize("binary_middle"), "text")
-        self.fr = fr = FileRecognizer(binary_bytes=101)
+        self.assertEqual(self._recognize_file("binary_middle", fr), "text")
+        self.assertEqual(self._recognize("binary_middle", fr), "text")
+        fr = FileRecognizer(binary_bytes=101)
         self.assertTrue(fr.is_binary("binary_middle"))
-        self.assertEqual(self._recognize_file("binary_middle"), "binary")
-        self.assertEqual(self._recognize("binary_middle"), "binary")
+        self.assertEqual(self._recognize_file("binary_middle", fr), "binary")
+        self.assertEqual(self._recognize("binary_middle", fr), "binary")
 
     def test_socket(self):
-        self.fr = fr = FileRecognizer()
-        self.assertEqual(self._recognize("socket_test"), "skip")
+        fr = FileRecognizer()
+        self.assertEqual(self._recognize("socket_test", fr), "skip")
 
     def test_dir(self):
-        self.fr = fr = FileRecognizer()
-        self.assertEqual(self._recognize_directory("dir"), "directory")
-        self.assertEqual(self._recognize("dir"), "directory")
+        fr = FileRecognizer()
+        self.assertEqual(self._recognize_directory("dir", fr), "directory")
+        self.assertEqual(self._recognize("dir", fr), "directory")
 
     def test_skip_symlinks(self):
-        self.fr = fr = FileRecognizer(skip_symlink_files=True, skip_symlink_dirs=True)
-        self.assertEqual(self._recognize("binary_link"), "link")
-        self.assertEqual(self._recognize_file("binary_link"), "link")
-        self.assertEqual(self._recognize("text_link"), "link")
-        self.assertEqual(self._recognize_file("text_link"), "link")
-        self.assertEqual(self._recognize("dir_link"), "link")
-        self.assertEqual(self._recognize_directory("dir_link"), "link")
+        fr = FileRecognizer(skip_symlink_files=True, skip_symlink_dirs=True)
+        self.assertEqual(self._recognize("binary_link", fr), "link")
+        self.assertEqual(self._recognize_file("binary_link", fr), "link")
+        self.assertEqual(self._recognize("text_link", fr), "link")
+        self.assertEqual(self._recognize_file("text_link", fr), "link")
+        self.assertEqual(self._recognize("dir_link", fr), "link")
+        self.assertEqual(self._recognize_directory("dir_link", fr), "link")
 
     def test_do_not_skip_symlinks(self):
-        self.fr = fr = FileRecognizer(skip_symlink_files=False, skip_symlink_dirs=False)
-        self.assertEqual(self._recognize("binary_link"), "binary")
-        self.assertEqual(self._recognize_file("binary_link"), "binary")
-        self.assertEqual(self._recognize("text_link"), "text")
-        self.assertEqual(self._recognize_file("text_link"), "text")
-        self.assertEqual(self._recognize("dir_link"), "directory")
-        self.assertEqual(self._recognize_directory("dir_link"), "directory")
+        fr = FileRecognizer(skip_symlink_files=False, skip_symlink_dirs=False)
+        self.assertEqual(self._recognize("binary_link", fr), "binary")
+        self.assertEqual(self._recognize_file("binary_link", fr), "binary")
+        self.assertEqual(self._recognize("text_link", fr), "text")
+        self.assertEqual(self._recognize_file("text_link", fr), "text")
+        self.assertEqual(self._recognize("dir_link", fr), "directory")
+        self.assertEqual(self._recognize_directory("dir_link", fr), "directory")
 
     def test_skip_hidden(self):
-        self.fr = fr = FileRecognizer(skip_hidden_files=True, skip_hidden_dirs=True)
-        self.assertEqual(self._recognize(".binary"), "skip")
-        self.assertEqual(self._recognize_file(".binary"), "skip")
-        self.assertEqual(self._recognize(".text"), "skip")
-        self.assertEqual(self._recognize_file(".text"), "skip")
-        self.assertEqual(self._recognize(".dir"), "skip")
-        self.assertEqual(self._recognize_directory(".dir"), "skip")
-        self.assertEqual(self._recognize(".binary_link"), "skip")
-        self.assertEqual(self._recognize_file(".binary_link"), "skip")
-        self.assertEqual(self._recognize(".text_link"), "skip")
-        self.assertEqual(self._recognize_file(".text_link"), "skip")
-        self.assertEqual(self._recognize(".dir_link"), "skip")
-        self.assertEqual(self._recognize_directory(".dir_link"), "skip")
-        self.assertEqual(self._recognize(".text.gz"), "skip")
-        self.assertEqual(self._recognize_file(".text.gz"), "skip")
-        self.assertEqual(self._recognize(".binary.gz"), "skip")
-        self.assertEqual(self._recognize_file(".binary.gz"), "skip")
+        fr = FileRecognizer(skip_hidden_files=True, skip_hidden_dirs=True)
+        self.assertEqual(self._recognize(".binary", fr), "skip")
+        self.assertEqual(self._recognize_file(".binary", fr), "skip")
+        self.assertEqual(self._recognize(".text", fr), "skip")
+        self.assertEqual(self._recognize_file(".text", fr), "skip")
+        self.assertEqual(self._recognize(".dir", fr), "skip")
+        self.assertEqual(self._recognize_directory(".dir", fr), "skip")
+        self.assertEqual(self._recognize(".binary_link", fr), "skip")
+        self.assertEqual(self._recognize_file(".binary_link", fr), "skip")
+        self.assertEqual(self._recognize(".text_link", fr), "skip")
+        self.assertEqual(self._recognize_file(".text_link", fr), "skip")
+        self.assertEqual(self._recognize(".dir_link", fr), "skip")
+        self.assertEqual(self._recognize_directory(".dir_link", fr), "skip")
+        self.assertEqual(self._recognize(".text.gz", fr), "skip")
+        self.assertEqual(self._recognize_file(".text.gz", fr), "skip")
+        self.assertEqual(self._recognize(".binary.gz", fr), "skip")
+        self.assertEqual(self._recognize_file(".binary.gz", fr), "skip")
 
     def test_skip_backup(self):
-        self.fr = fr = FileRecognizer(skip_backup_files=True)
-        self.assertEqual(self._recognize_file("text~"), "skip")
+        fr = FileRecognizer(skip_backup_files=True)
+        self.assertEqual(self._recognize_file("text~", fr), "skip")
 
     def test_do_not_skip_backup(self):
-        self.fr = fr = FileRecognizer(skip_backup_files=False)
-        self.assertEqual(self._recognize_file("text~"), "text")
+        fr = FileRecognizer(skip_backup_files=False)
+        self.assertEqual(self._recognize_file("text~", fr), "text")
 
     def test_skip_weird_exts(self):
-        self.fr = fr = FileRecognizer(skip_exts=set())
-        self.assertEqual(self._recognize_file("text#"), "text")
-        self.assertEqual(self._recognize_file("foo.bar.baz"), "text")
-        self.fr = fr = FileRecognizer(skip_exts=set(["#", ".bar.baz"]))
-        self.assertEqual(self._recognize_file("text#"), "skip")
-        self.assertEqual(self._recognize_file("foo.bar.baz"), "skip")
+        fr = FileRecognizer(skip_exts=set())
+        self.assertEqual(self._recognize_file("text#", fr), "text")
+        self.assertEqual(self._recognize_file("foo.bar.baz", fr), "text")
+        fr = FileRecognizer(skip_exts=set(["#", ".bar.baz"]))
+        self.assertEqual(self._recognize_file("text#", fr), "skip")
+        self.assertEqual(self._recognize_file("foo.bar.baz", fr), "skip")
 
     def test_do_not_skip_hidden_or_symlinks(self):
-        self.fr = fr = FileRecognizer(
+        fr = FileRecognizer(
             skip_hidden_files=False,
             skip_hidden_dirs=False,
             skip_symlink_dirs=False,
             skip_symlink_files=False,
         )
-        self.assertEqual(self._recognize(".binary"), "binary")
-        self.assertEqual(self._recognize_file(".binary"), "binary")
-        self.assertEqual(self._recognize(".text"), "text")
-        self.assertEqual(self._recognize_file(".text"), "text")
-        self.assertEqual(self._recognize(".dir"), "directory")
-        self.assertEqual(self._recognize_directory(".dir"), "directory")
-        self.assertEqual(self._recognize(".binary_link"), "binary")
-        self.assertEqual(self._recognize_file(".binary_link"), "binary")
-        self.assertEqual(self._recognize(".text_link"), "text")
-        self.assertEqual(self._recognize_file(".text_link"), "text")
-        self.assertEqual(self._recognize(".dir_link"), "directory")
-        self.assertEqual(self._recognize_directory(".dir_link"), "directory")
-        self.assertEqual(self._recognize(".text.gz"), "gzip")
-        self.assertEqual(self._recognize_file(".text.gz"), "gzip")
-        self.assertEqual(self._recognize(".binary.gz"), "binary")
-        self.assertEqual(self._recognize_file(".binary.gz"), "binary")
+        self.assertEqual(self._recognize(".binary", fr), "binary")
+        self.assertEqual(self._recognize_file(".binary", fr), "binary")
+        self.assertEqual(self._recognize(".text", fr), "text")
+        self.assertEqual(self._recognize_file(".text", fr), "text")
+        self.assertEqual(self._recognize(".dir", fr), "directory")
+        self.assertEqual(self._recognize_directory(".dir", fr), "directory")
+        self.assertEqual(self._recognize(".binary_link", fr), "binary")
+        self.assertEqual(self._recognize_file(".binary_link", fr), "binary")
+        self.assertEqual(self._recognize(".text_link", fr), "text")
+        self.assertEqual(self._recognize_file(".text_link", fr), "text")
+        self.assertEqual(self._recognize(".dir_link", fr), "directory")
+        self.assertEqual(self._recognize_directory(".dir_link", fr), "directory")
+        self.assertEqual(self._recognize(".text.gz", fr), "gzip")
+        self.assertEqual(self._recognize_file(".text.gz", fr), "gzip")
+        self.assertEqual(self._recognize(".binary.gz", fr), "binary")
+        self.assertEqual(self._recognize_file(".binary.gz", fr), "binary")
 
     def test_do_not_skip_hidden_but_skip_symlinks(self):
-        self.fr = fr = FileRecognizer(
+        fr = FileRecognizer(
             skip_hidden_files=False,
             skip_hidden_dirs=False,
             skip_symlink_dirs=True,
             skip_symlink_files=True,
         )
-        self.assertEqual(self._recognize(".binary"), "binary")
-        self.assertEqual(self._recognize_file(".binary"), "binary")
-        self.assertEqual(self._recognize(".text"), "text")
-        self.assertEqual(self._recognize_file(".text"), "text")
-        self.assertEqual(self._recognize(".dir"), "directory")
-        self.assertEqual(self._recognize_directory(".dir"), "directory")
-        self.assertEqual(self._recognize(".binary_link"), "link")
-        self.assertEqual(self._recognize_file(".binary_link"), "link")
-        self.assertEqual(self._recognize(".text_link"), "link")
-        self.assertEqual(self._recognize_file(".text_link"), "link")
-        self.assertEqual(self._recognize(".dir_link"), "link")
-        self.assertEqual(self._recognize_directory(".dir_link"), "link")
-        self.assertEqual(self._recognize(".text.gz"), "gzip")
-        self.assertEqual(self._recognize_file(".text.gz"), "gzip")
-        self.assertEqual(self._recognize(".binary.gz"), "binary")
-        self.assertEqual(self._recognize_file(".binary.gz"), "binary")
+        self.assertEqual(self._recognize(".binary", fr), "binary")
+        self.assertEqual(self._recognize_file(".binary", fr), "binary")
+        self.assertEqual(self._recognize(".text", fr), "text")
+        self.assertEqual(self._recognize_file(".text", fr), "text")
+        self.assertEqual(self._recognize(".dir", fr), "directory")
+        self.assertEqual(self._recognize_directory(".dir", fr), "directory")
+        self.assertEqual(self._recognize(".binary_link", fr), "link")
+        self.assertEqual(self._recognize_file(".binary_link", fr), "link")
+        self.assertEqual(self._recognize(".text_link", fr), "link")
+        self.assertEqual(self._recognize_file(".text_link", fr), "link")
+        self.assertEqual(self._recognize(".dir_link", fr), "link")
+        self.assertEqual(self._recognize_directory(".dir_link", fr), "link")
+        self.assertEqual(self._recognize(".text.gz", fr), "gzip")
+        self.assertEqual(self._recognize_file(".text.gz", fr), "gzip")
+        self.assertEqual(self._recognize(".binary.gz", fr), "binary")
+        self.assertEqual(self._recognize_file(".binary.gz", fr), "binary")
 
     def test_lack_of_permissions(self):
-        self.fr = fr = FileRecognizer()
-        self.assertEqual(self._recognize("unreadable_file"), "unreadable")
-        self.assertEqual(self._recognize_file("unreadable_file"), "unreadable")
-        self.assertEqual(self._recognize("unreadable_dir"), "directory")
-        self.assertEqual(self._recognize_directory("unreadable_dir"), "directory")
-        self.assertEqual(self._recognize("unexecutable_dir"), "directory")
-        self.assertEqual(self._recognize_directory("unexecutable_dir"), "directory")
-        self.assertEqual(self._recognize("totally_unusable_dir"), "directory")
-        self.assertEqual(self._recognize_directory("totally_unusable_dir"), "directory")
+        fr = FileRecognizer()
+        self.assertEqual(self._recognize("unreadable_file", fr), "unreadable")
+        self.assertEqual(self._recognize_file("unreadable_file", fr), "unreadable")
+        self.assertEqual(self._recognize("unreadable_dir", fr), "directory")
+        self.assertEqual(self._recognize_directory("unreadable_dir", fr), "directory")
+        self.assertEqual(self._recognize("unexecutable_dir", fr), "directory")
+        self.assertEqual(self._recognize_directory("unexecutable_dir", fr), "directory")
+        self.assertEqual(self._recognize("totally_unusable_dir", fr), "directory")
+        self.assertEqual(self._recognize_directory("totally_unusable_dir", fr), "directory")
 
     def test_symlink_src_unreadable(self):
-        self.fr = fr = FileRecognizer(skip_symlink_files=False, skip_symlink_dirs=False)
-        self.assertEqual(self._recognize("unreadable_file_link"), "unreadable")
-        self.assertEqual(self._recognize_file("unreadable_file_link"), "unreadable")
-        self.assertEqual(self._recognize("unreadable_dir_link"), "directory")
-        self.assertEqual(self._recognize_directory("unreadable_dir_link"), "directory")
-        self.assertEqual(self._recognize("unexecutable_dir_link"), "directory")
+        fr = FileRecognizer(skip_symlink_files=False, skip_symlink_dirs=False)
+        self.assertEqual(self._recognize("unreadable_file_link", fr), "unreadable")
+        self.assertEqual(self._recognize_file("unreadable_file_link", fr), "unreadable")
+        self.assertEqual(self._recognize("unreadable_dir_link", fr), "directory")
+        self.assertEqual(self._recognize_directory("unreadable_dir_link", fr), "directory")
+        self.assertEqual(self._recognize("unexecutable_dir_link", fr), "directory")
         self.assertEqual(
-            self._recognize_directory("unexecutable_dir_link"), "directory"
+            self._recognize_directory("unexecutable_dir_link", fr), "directory"
         )
-        self.assertEqual(self._recognize("totally_unusable_dir_link"), "directory")
+        self.assertEqual(self._recognize("totally_unusable_dir_link", fr), "directory")
         self.assertEqual(
-            self._recognize_directory("totally_unusable_dir_link"), "directory"
+            self._recognize_directory("totally_unusable_dir_link", fr), "directory"
         )
 
     def test_skip_ext(self):
-        self.fr = fr = FileRecognizer(skip_exts=set([".skip_ext"]))
-        self.assertEqual(self._recognize("text.skip_ext"), "skip")
-        self.assertEqual(self._recognize_file("text.skip_ext"), "skip")
-        self.assertEqual(self._recognize("text"), "text")
-        self.assertEqual(self._recognize_file("text"), "text")
-        self.assertEqual(self._recognize("text.dont_skip_ext"), "text")
-        self.assertEqual(self._recognize_file("text.dont_skip_ext"), "text")
-        self.assertEqual(self._recognize("dir.skip_ext"), "directory")
-        self.assertEqual(self._recognize_directory("dir.skip_ext"), "directory")
+        fr = FileRecognizer(skip_exts=set([".skip_ext"]))
+        self.assertEqual(self._recognize("text.skip_ext", fr), "skip")
+        self.assertEqual(self._recognize_file("text.skip_ext", fr), "skip")
+        self.assertEqual(self._recognize("text", fr), "text")
+        self.assertEqual(self._recognize_file("text", fr), "text")
+        self.assertEqual(self._recognize("text.dont_skip_ext", fr), "text")
+        self.assertEqual(self._recognize_file("text.dont_skip_ext", fr), "text")
+        self.assertEqual(self._recognize("dir.skip_ext", fr), "directory")
+        self.assertEqual(self._recognize_directory("dir.skip_ext", fr), "directory")
 
     def test_skip_dir(self):
-        self.fr = fr = FileRecognizer(skip_dirs=set(["skip_dir", "fake_skip_dir"]))
-        self.assertEqual(self._recognize("skip_dir"), "skip")
-        self.assertEqual(self._recognize_directory("skip_dir"), "skip")
-        self.assertEqual(self._recognize("fake_skip_dir"), "text")
-        self.assertEqual(self._recognize_file("fake_skip_dir"), "text")
+        fr = FileRecognizer(skip_dirs=set(["skip_dir", "fake_skip_dir"]))
+        self.assertEqual(self._recognize("skip_dir", fr), "skip")
+        self.assertEqual(self._recognize_directory("skip_dir", fr), "skip")
+        self.assertEqual(self._recognize("fake_skip_dir", fr), "text")
+        self.assertEqual(self._recognize_file("fake_skip_dir", fr), "text")
 
     def test_walking(self):
-        self.fr = fr = FileRecognizer(
+        fr = FileRecognizer(
             skip_hidden_files=True,
             skip_hidden_dirs=True,
             skip_exts=set([".skip_ext"]),
@@ -455,7 +455,7 @@ class FilesTextCase(TestCase):
 
     def test_dot(self):
         with cd("tree"):
-            self.fr = fr = FileRecognizer(
+            fr = FileRecognizer(
                 skip_hidden_files=True,
                 skip_hidden_dirs=True,
                 skip_exts=set([".skip_ext"]),
@@ -474,7 +474,7 @@ class FilesTextCase(TestCase):
 
     def test_dot_dot(self):
         with cd("tree/dir"):
-            self.fr = fr = FileRecognizer(
+            fr = FileRecognizer(
                 skip_hidden_files=True,
                 skip_hidden_dirs=True,
                 skip_exts=set([".skip_ext"]),
@@ -510,11 +510,11 @@ class FilesTextCase_DirEntry(FilesTextCase):
                 return dire
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
 
-    def _recognize(self, filename):
-        return self.fr.recognize(filename, self._get_direntry(filename))
+    def _recognize(self, filename, fr):
+        return fr.recognize(filename, self._get_direntry(filename))
 
-    def _recognize_file(self, filename):
-        return self.fr.recognize(filename, self._get_direntry(filename))
+    def _recognize_file(self, filename, fr):
+        return fr.recognize(filename, self._get_direntry(filename))
 
-    def _recognize_directory(self, filename):
-        return self.fr.recognize_directory(filename, self._get_direntry(filename))
+    def _recognize_directory(self, filename, fr):
+        return fr.recognize_directory(filename, self._get_direntry(filename))
