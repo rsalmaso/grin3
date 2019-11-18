@@ -110,7 +110,7 @@ def get_filenames(args):
         if fn == "-":
             yield fn, "text"
             continue
-        kind = fr.recognize(fn)
+        kind = fr.recognize(fn, None)
         if kind in ("text", "gzip") and fnmatch.fnmatch(
             os.path.basename(fn), args.include
         ):

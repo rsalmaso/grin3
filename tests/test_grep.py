@@ -1,7 +1,8 @@
-from unittest import TestCase
-import grin
-from io import BytesIO
 import re
+from io import BytesIO
+from unittest import TestCase
+
+import grin
 
 all_foo = b"""foo
 foo

@@ -25,6 +25,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import fnmatch
 import gzip
 import os
 import stat
@@ -62,6 +63,8 @@ class FileRecognizer:
     binary_bytes : int
         The number of bytes to check at the beginning and end of a file for
         binary characters.
+    include : Optional[str]
+        fnmatch pattern to match file names against
     """
 
     def __init__(
@@ -74,6 +77,7 @@ class FileRecognizer:
         skip_symlink_dirs=True,
         skip_symlink_files=True,
         binary_bytes=4096,
+        include=None,
     ):
         self.skip_hidden_dirs = skip_hidden_dirs
         self.skip_hidden_files = skip_hidden_files
@@ -95,6 +99,7 @@ class FileRecognizer:
         self.skip_symlink_dirs = skip_symlink_dirs
         self.skip_symlink_files = skip_symlink_files
         self.binary_bytes = binary_bytes
+        self.include = include
 
     def is_binary(self, filename):
         """ Determine if a given file is binary or not.
@@ -157,7 +162,7 @@ class FileRecognizer:
                     is_gzipped_text = False
         return is_gzipped_text
 
-    def recognize(self, filename):
+    def recognize(self, filename, direntry):
         """ Determine what kind of thing a filename represents.
 
         It will also determine what a directory walker should do with the
@@ -194,20 +199,28 @@ class FileRecognizer:
         kind : str
         """
         try:
-            st_mode = os.stat(filename).st_mode
-            if stat.S_ISREG(st_mode):
-                return self.recognize_file(filename)
-            elif stat.S_ISDIR(st_mode):
-                return self.recognize_directory(filename)
+            if direntry is None:
+                st_mode = os.stat(filename).st_mode
+                if stat.S_ISREG(st_mode):
+                    return self.recognize_file(filename, None)
+                elif stat.S_ISDIR(st_mode):
+                    return self.recognize_directory(filename, None)
+                else:
+                    # We're only interested in regular files and directories.
+                    # A named pipe in particular would be problematic, because
+                    # it would cause open() to hang indefinitely.
+                    return "skip"
             else:
-                # We're only interested in regular files and directories.
-                # A named pipe in particular would be problematic, because
-                # it would cause open() to hang indefinitely.
-                return "skip"
+                if direntry.is_file():
+                    return self.recognize_file(filename, direntry)
+                elif direntry.is_dir():
+                    return self.recognize_directory(filename, direntry)
+                else:
+                    return "skip"
         except OSError:
             return "unreadable"
 
-    def recognize_directory(self, filename):
+    def recognize_directory(self, filename, direntry):
         """ Determine what to do with a directory.
         """
         basename = os.path.split(filename)[-1]
@@ -217,13 +230,18 @@ class FileRecognizer:
             and basename not in (".", "..")
         ):
             return "skip"
-        if self.skip_symlink_dirs and os.path.islink(filename):
-            return "link"
+        if self.skip_symlink_dirs:
+            if direntry is None:
+                if os.path.islink(filename):
+                    return "link"
+            else:
+                if direntry.is_symlink():
+                    return "link"
         if basename in self.skip_dirs:
             return "skip"
         return "directory"
 
-    def recognize_file(self, filename):
+    def recognize_file(self, filename, direntry):
         """ Determine what to do with a file.
         """
         basename = os.path.split(filename)[-1]
@@ -231,8 +249,17 @@ class FileRecognizer:
             return "skip"
         if self.skip_backup_files and basename.endswith("~"):
             return "skip"
-        if self.skip_symlink_files and os.path.islink(filename):
-            return "link"
+        if self.skip_symlink_files:
+            if direntry is None:
+                if os.path.islink(filename):
+                    return "link"
+            else:
+                if direntry.is_symlink():
+                    return "link"
+
+        if self.include is not None:
+            if not fnmatch.fnmatch(basename, self.include):
+                return "skip"
 
         filename_nc = os.path.normcase(filename)
         ext = os.path.splitext(filename_nc)[1]
@@ -252,7 +279,7 @@ class FileRecognizer:
         except (OSError, IOError):
             return "unreadable"
 
-    def walk(self, startpath):
+    def walk(self, startpath, direntry=None):
         """ Walk the tree from a given start path yielding all of the files (not
         directories) and their kinds underneath it depth first.
 
@@ -268,19 +295,19 @@ class FileRecognizer:
         filename : str
         kind : str
         """
-        kind = self.recognize(startpath)
+        kind = self.recognize(startpath, direntry)
         if kind in ("binary", "text", "gzip"):
             yield startpath, kind
             # Not a directory, so there is no need to recurse.
             return
         elif kind == "directory":
             try:
-                basenames = os.listdir(startpath)
+                entries = os.scandir(startpath)
             except OSError:
                 return
-            for basename in sorted(basenames):
-                path = os.path.join(startpath, basename)
-                for fn, k in self.walk(path):
+            for entry in sorted(entries, key=lambda e: e.name):
+                path = os.path.join(startpath, entry.name)
+                for fn, k in self.walk(path, entry):
                     yield fn, k
 
 
@@ -298,5 +325,6 @@ def get_recognizer(args):
         skip_exts=skip_exts,
         skip_symlink_files=not args.follow_symlinks,
         skip_symlink_dirs=not args.follow_symlinks,
+        include=args.include,
     )
     return fr
