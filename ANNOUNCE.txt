@@ -7,6 +7,13 @@ files, primarily source code.
  Git (mirror): https://gitlab.com/rsalmaso/grin3
  License:      BSD
 
+grin 2.1.0 is a feature release.
+
+  * speedup file access
+  * default_options is now an object
+  * exclude by default node_modules,.class,target directories
+  * support for stable python3.8
+
 grin 2.0.2 is a bug-fix release.
 
   * fix encoding
