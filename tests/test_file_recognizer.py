@@ -492,29 +492,29 @@ class FilesTextCase(TestCase):
             self.assertEqual(result, truth)
 
 
-class FilesTextCase_DirEntry(FilesTextCase):
+class DirEntryFilesTextCase_DirEntry(FilesTextCase):
     """
     Run every test in FilesTextCase, except that the 'direntry' argument is supplied to .recognize,
     .recognize_directory and .recognize_file.
     """
 
-    def _get_direntry(self, path):
+    def _do_recognize(self, filename, fr, method):
         # Working backwards from the filename to the DirEntry record that would have produced it.
-        direc, fn = os.path.split(path)
-        if direc == "":
-            look_in = "."
-        else:
-            look_in = direc
-        for dire in os.scandir(look_in):
-            if dire.name == fn:
-                return dire
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), path)
+
+        direc, fn = os.path.split(filename)
+        direc = "." if direc == "" else direc
+        entries = list(os.scandir(direc))
+        if entries:
+            for dire in entries:
+                if dire.name == fn:
+                    return method(filename, dire)
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), filename)
 
     def _recognize(self, filename, fr):
-        return fr.recognize(filename, self._get_direntry(filename))
+        return self._do_recognize(filename, fr, fr.recognize)
 
     def _recognize_file(self, filename, fr):
-        return fr.recognize(filename, self._get_direntry(filename))
+        return self._do_recognize(filename, fr, fr.recognize)
 
     def _recognize_directory(self, filename, fr):
-        return fr.recognize_directory(filename, self._get_direntry(filename))
+        return self._do_recognize(filename, fr, fr.recognize_directory)
