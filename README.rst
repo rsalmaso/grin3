@@ -223,13 +223,11 @@ extract and search text metadata from binary files.
 Development, bugs and such
 --------------------------
 
-The development sources are hosted on Bitbucket (in mercurial format):
-
-  https://bitbucket.org/rsalmaso/grin3
-
-and in git mirrors on
+The development sources are hosted on github:
 
   https://github.com/rsalmaso/grin3
+
+and in git mirrors on
 
   https://gitlab.com/rsalmaso/grin3
 

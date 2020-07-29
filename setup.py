@@ -18,7 +18,7 @@ setup(
     description="A grep program configured the way I like it. (python3 port)",
     long_description=long_description,
     license="BSD",
-    url="https://bitbucket.org/rsalmaso/grin3",
+    url="https://github.com/rsalmaso/grin3",
     classifiers=[
         "License :: OSI Approved :: BSD License",
         "Development Status :: 5 - Production/Stable",
