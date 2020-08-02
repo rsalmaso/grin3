@@ -20,6 +20,7 @@ apt install --yes \
     python3.6 python3.6-dev python3.6-venv \
     python3.7 python3.7-dev python3.7-venv \
     python3.8 python3.8-dev python3.8-venv \
+    python3.9 python3.9-dev python3.9-venv \
     python3-pip
 
 mkdir -p /etc/mercurial

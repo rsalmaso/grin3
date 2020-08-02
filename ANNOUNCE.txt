@@ -7,6 +7,10 @@ files, primarily source code.
  Git (mirror): https://gitlab.com/rsalmaso/grin3
  License:      BSD
 
+grin dev
+
+  * support for python3.9
+
 grin 2.1.0 is a feature release.
 
   * speedup file access
