@@ -10,6 +10,7 @@ files, primarily source code.
 grin dev
 
   * support for python3.9
+  * support for pypy3
 
 grin 2.1.0 is a feature release.
 

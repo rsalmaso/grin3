@@ -9,6 +9,7 @@ $script = <<-SCRIPT
 export DEBIAN_FRONTEND=noninteractive
 add-apt-repository --no-update --yes ppa:deadsnakes/ppa
 add-apt-repository --no-update --yes ppa:git-core/ppa
+add-apt-repository --no-update --yes ppa:pypy/ppa
 
 apt update
 apt dist-upgrade -y
@@ -21,6 +22,7 @@ apt install --yes \
     python3.7 python3.7-dev python3.7-venv \
     python3.8 python3.8-dev python3.8-venv \
     python3.9 python3.9-dev python3.9-venv \
+    pypy3 pypy3-dev \
     python3-pip
 
 mkdir -p /etc/mercurial
