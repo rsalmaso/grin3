@@ -16,22 +16,21 @@ apt dist-upgrade -y
 # python-software-properties
 apt install --yes \
     git \
-    python2.7 python2.7-dev \
     python3.4 python3.4-dev python3.4-venv \
     python3.5 python3.5-dev python3.5-venv \
     python3.6 python3.6-dev python3.6-venv \
     python3.7 python3.7-dev python3.7-venv \
     python3.8 python3.8-dev python3.8-venv \
-    python-pip python3-pip
+    python3-pip
 
 mkdir -p /etc/mercurial
 cat >/home/vagrant/.config/hg/hgrc << EOF
 [extensions]
 evolve =
 EOF
-python2.7 -m pip install mercurial
-python2.7 -m pip install hg-evolve
-python3.6 -m pip install tox
+python3 -m pip install mercurial
+python3 -m pip install hg-evolve
+python3 -m pip install tox
 
 # Fix locale to allow saving unicoded filenames
 echo 'LANG=en_US.UTF-8' > /etc/default/locale
@@ -45,11 +44,11 @@ $vm_log_dir = File.join(Dir.pwd, ".vagrant", "log")
 FileUtils.mkdir_p $vm_log_dir
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "ubuntu/bionic64"  # 18.04
+  config.vm.box = "ubuntu/focal64"
   config.vm.provision :shell, inline: $script
 
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["modifyvm", :id, "--memory", 2048]
-    vb.customize ["modifyvm", :id, "--uartmode1", "file", File.join($vm_log_dir, "bionic.log")]
+    vb.customize ["modifyvm", :id, "--uartmode1", "file", File.join($vm_log_dir, "focal.log")]
   end
 end
