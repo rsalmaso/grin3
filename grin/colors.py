@@ -47,7 +47,7 @@ COLOR_STYLE = {
 
 
 def colorize(s, fg=None, bg=None, bold=False, underline=False, reverse=False):
-    """ Wraps a string with ANSI color escape sequences corresponding to the
+    """Wraps a string with ANSI color escape sequences corresponding to the
     style parameters given.
 
     All of the color and style parameters are optional.

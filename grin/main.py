@@ -52,7 +52,7 @@ READ_BLOCKSIZE = 16 * 1024 * 1024
 
 
 class GrepText:
-    """ Grep a single file for a regex by iterating over the lines in a file.
+    """Grep a single file for a regex by iterating over the lines in a file.
 
     Attributes
     ----------
@@ -72,7 +72,7 @@ class GrepText:
         self.options = options
 
     def read_block_with_context(self, prev, fp, fp_size):
-        """ Read a block of data from the file, along with some surrounding
+        """Read a block of data from the file, along with some surrounding
         context.
 
         Parameters
@@ -141,11 +141,7 @@ class GrepText:
         before_lines = prev.data[before_start : prev.end]
         # Using readline() to force this block out to a newline boundary...
         try:
-            curr_block = (
-                prev.data[prev.end :]
-                + block_main
-                + ("" if is_last_block else to_str(fp.readline()))
-            )
+            curr_block = prev.data[prev.end :] + block_main + ("" if is_last_block else to_str(fp.readline()))
         except TypeError as ex:
             print(ex)
             print(prev)
@@ -155,9 +151,7 @@ class GrepText:
         if is_last_block:
             after_lines = ""
         else:
-            after_lines_list = [
-                to_str(fp.readline()) for i in range(self.options.after_context)
-            ]
+            after_lines_list = [to_str(fp.readline()) for i in range(self.options.after_context)]
             after_lines = "".join(after_lines_list)
 
         result = DataBlock(
@@ -170,7 +164,7 @@ class GrepText:
         return result
 
     def do_grep(self, fp):
-        """ Do a full grep.
+        """Do a full grep.
 
         Parameters
         ----------
@@ -201,9 +195,7 @@ class GrepText:
 
         block = self.read_block_with_context(None, fp, fp_size)
         while block.end > block.start:
-            (block_line_count, block_context) = self.do_grep_block(
-                block, line_count - block.before_count
-            )
+            (block_line_count, block_context) = self.do_grep_block(block, line_count - block.before_count)
             context += block_context
             if block.is_last:
                 break
@@ -224,7 +216,7 @@ class GrepText:
         return unique_context
 
     def do_grep_block(self, block, line_num_offset):
-        """ Grep a single block of file content.
+        """Grep a single block of file content.
 
         Parameters
         ----------
@@ -250,14 +242,10 @@ class GrepText:
         line_count = None
 
         def build_match_context(match):
-            match_line_num = (
-                bisect.bisect(line_offsets, match.start() + block.start) - 1
-            )
+            match_line_num = bisect.bisect(line_offsets, match.start() + block.start) - 1
             before_count = min(before, match_line_num)
             after_count = min(after, (len(line_offsets) - 1) - match_line_num - 1)
-            match_line = block.data[
-                line_offsets[match_line_num] : line_offsets[match_line_num + 1]
-            ]
+            match_line = block.data[line_offsets[match_line_num] : line_offsets[match_line_num + 1]]
             spans = [m.span() for m in self.regex.finditer(match_line)]
 
             before_ctx = [
@@ -292,8 +280,7 @@ class GrepText:
         return (line_count, block_context)
 
     def uniquify_context(self, context):
-        """ Remove duplicate lines from the list of context lines.
-        """
+        """Remove duplicate lines from the list of context lines."""
         context.sort()
         unique_context = []
         for group in itertools.groupby(context, lambda ikl: ikl[0]):
@@ -310,7 +297,7 @@ class GrepText:
         return unique_context
 
     def report(self, context_lines, filename=None):
-        """ Return a string showing the results.
+        """Return a string showing the results.
 
         Parameters
         ----------
@@ -334,11 +321,7 @@ class GrepText:
             line = "%s\n" % filename
             lines.append(line)
         else:
-            if (
-                self.options.show_filename
-                and filename is not None
-                and not self.options.show_emacs
-            ):
+            if self.options.show_filename and filename is not None and not self.options.show_emacs:
                 line = "%s:\n" % filename
                 if self.options.use_color:
                     line = colorize(line, **COLOR_STYLE.get("filename", {}))
@@ -350,11 +333,7 @@ class GrepText:
             else:
                 template = "%(line)s"
             for i, kind, line, spans in context_lines:
-                if (
-                    self.options.use_color
-                    and kind == MATCH
-                    and "searchterm" in COLOR_STYLE
-                ):
+                if self.options.use_color and kind == MATCH and "searchterm" in COLOR_STYLE:
                     style = COLOR_STYLE["searchterm"]
                     orig_line = line[:]
                     total_offset = 0
@@ -381,7 +360,7 @@ class GrepText:
         return text
 
     def grep_a_file(self, filename, opener=open):
-        """ Grep a single file that actually exists on the file system.
+        """Grep a single file that actually exists on the file system.
 
         Parameters
         ----------

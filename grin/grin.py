@@ -33,7 +33,6 @@ import re
 import shlex
 import sys
 
-from . import __version__
 from .main import GrepText
 from .recognizer import get_recognizer
 from .utils import get_regex
@@ -42,7 +41,7 @@ __all__ = ["get_filenames", "get_grin_arg_parser"]
 
 
 def get_filenames(args):
-    """ Generate the filenames to grep.
+    """Generate the filenames to grep.
 
     Parameters
     ----------
@@ -111,23 +110,20 @@ def get_filenames(args):
             yield fn, "text"
             continue
         kind = fr.recognize(fn, None)
-        if kind in ("text", "gzip") and fnmatch.fnmatch(
-            os.path.basename(fn), args.include
-        ):
+        if kind in ("text", "gzip") and fnmatch.fnmatch(os.path.basename(fn), args.include):
             yield fn, kind
         elif kind == "directory":
             for filename, k in fr.walk(fn):
-                if k in ("text", "gzip") and fnmatch.fnmatch(
-                    os.path.basename(filename), args.include
-                ):
+                if k in ("text", "gzip") and fnmatch.fnmatch(os.path.basename(filename), args.include):
                     yield filename, k
         # XXX: warn about other files?
         # XXX: handle binary?
 
 
 def get_grin_arg_parser(parser=None):
-    """ Create the command-line parser.
-    """
+    """Create the command-line parser."""
+    from . import __version__
+
     if parser is None:
         parser = argparse.ArgumentParser(
             description="Search text files for a given regex pattern.",
@@ -156,20 +152,14 @@ def get_grin_arg_parser(parser=None):
         "--after-context",
         default=0,
         type=int,
-        help=(
-            "the number of lines of context to show after the match "
-            "[default=%(default)r]"
-        ),
+        help="the number of lines of context to show after the match [default=%(default)r]",
     )
     parser.add_argument(
         "-B",
         "--before-context",
         default=0,
         type=int,
-        help=(
-            "the number of lines of context to show before the match "
-            "[default=%(default)r]"
-        ),
+        help="the number of lines of context to show before the match [default=%(default)r]",
     )
     parser.add_argument(
         "-C",
@@ -248,10 +238,7 @@ def get_grin_arg_parser(parser=None):
     parser.add_argument(
         "--force-color",
         action="store_true",
-        help=(
-            "always use colorized output even when piping to "
-            "something that may not be able to handle it"
-        ),
+        help="always use colorized output even when piping to something that may not be able to handle it",
     )
     parser.add_argument(
         "-s",
@@ -348,9 +335,7 @@ def get_grin_arg_parser(parser=None):
         action="store_true",
         help="filenames specified in --files-from-file are separated by NULs",
     )
-    parser.add_argument(
-        "--sys-path", action="store_true", help="search the directories on sys.path"
-    )
+    parser.add_argument("--sys-path", action="store_true", help="search the directories on sys.path")
 
     parser.add_argument("regex", help="the regular expression to search for")
     parser.add_argument("files", nargs="*", help="the files to search")
@@ -370,11 +355,7 @@ def main(argv=None):
             args.before_context = args.context
             args.after_context = args.context
 
-        use_term_color = (
-            not args.no_color
-            and sys.stdout.isatty()
-            and (os.environ.get("TERM") != "dumb")
-        )
+        use_term_color = not args.no_color and sys.stdout.isatty() and (os.environ.get("TERM") != "dumb")
         args.use_color = args.force_color or use_term_color
 
         regex = get_regex(args)

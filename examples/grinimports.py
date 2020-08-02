@@ -76,7 +76,7 @@ def normalize_file(filename, *args):
     """
     try:
         ast = compiler.parseFile(filename)
-    except:
+    except Exception:
         return StringIO("")
     ip = ImportPuller()
     walk(ast, ip)
@@ -89,9 +89,7 @@ def get_grinimports_arg_parser(parser=None):
     """
     parser = grin.get_grin_arg_parser(parser)
     parser.set_defaults(include="*.py")
-    parser.description = (
-        "Extract, normalize and search import statements from Python files."
-    )
+    parser.description = "Extract, normalize and search import statements from Python files."
     parser.epilog = """
 For example, if I have a file example.py with a bunch of imports:
 
@@ -116,7 +114,7 @@ We can grep for 'import' in order to get all of the import statements:
 
 If we just want to find imports of foo.baz, we can do this:
 
-    $ grinimports.py "import foo\.baz|from foo import baz" example.py
+    $ grinimports.py "import foo\\.baz|from foo import baz" example.py
     example.py:
         2 : import foo.baz as blah
         4 : from foo import baz as bat
@@ -124,7 +122,7 @@ If we just want to find imports of foo.baz, we can do this:
 A typical grep (or grin) cannot find all of these in the original files because
 the import statements are not normalized.
 
-    $ grin "foo\.baz|from foo import baz" example.py
+    $ grin "foo\\.baz|from foo import baz" example.py
     example.py:
         2 : import foo.baz as blah
         6 :     "Do something to foo.baz"
@@ -146,9 +144,7 @@ def grinimports_main(argv=None):
     if args.context is not None:
         args.before_context = args.context
         args.after_context = args.context
-    _isatty = (
-        not args.no_color and sys.stdout.isatty() and (os.environ.get("TERM") != "dumb")
-    )
+    _isatty = not args.no_color and sys.stdout.isatty() and (os.environ.get("TERM") != "dumb")
     args.use_color = args.force_color or _isatty
 
     regex = grin.get_regex(args)

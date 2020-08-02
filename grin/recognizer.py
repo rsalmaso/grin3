@@ -39,7 +39,7 @@ GZIP_MAGIC = b"\037\213"
 
 
 class FileRecognizer:
-    """ Configurable way to determine what kind of file something is.
+    """Configurable way to determine what kind of file something is.
 
     Attributes
     ----------
@@ -102,7 +102,7 @@ class FileRecognizer:
         self.include = include
 
     def is_binary(self, filename):
-        """ Determine if a given file is binary or not.
+        """Determine if a given file is binary or not.
 
         Parameters
         ----------
@@ -116,7 +116,7 @@ class FileRecognizer:
             return self._is_binary_file(fp)
 
     def _is_binary_file(self, f):
-        """ Determine if a given filelike object has binary data or not.
+        """Determine if a given filelike object has binary data or not.
 
         Parameters
         ----------
@@ -135,7 +135,7 @@ class FileRecognizer:
         return is_binary_string(data)
 
     def is_gzipped_text(self, filename):
-        """ Determine if a given file is a gzip-compressed text file or not.
+        """Determine if a given file is a gzip-compressed text file or not.
 
         If the uncompressed file is binary and not text, then this will return
         False.
@@ -163,7 +163,7 @@ class FileRecognizer:
         return is_gzipped_text
 
     def recognize(self, filename, direntry):
-        """ Determine what kind of thing a filename represents.
+        """Determine what kind of thing a filename represents.
 
         It will also determine what a directory walker should do with the
         file:
@@ -221,14 +221,9 @@ class FileRecognizer:
             return "unreadable"
 
     def recognize_directory(self, filename, direntry):
-        """ Determine what to do with a directory.
-        """
+        """Determine what to do with a directory."""
         basename = os.path.split(filename)[-1]
-        if (
-            self.skip_hidden_dirs
-            and basename.startswith(".")
-            and basename not in (".", "..")
-        ):
+        if self.skip_hidden_dirs and basename.startswith(".") and basename not in (".", ".."):
             return "skip"
         if self.skip_symlink_dirs:
             if direntry is None:
@@ -242,8 +237,7 @@ class FileRecognizer:
         return "directory"
 
     def recognize_file(self, filename, direntry):
-        """ Determine what to do with a file.
-        """
+        """Determine what to do with a file."""
         basename = os.path.split(filename)[-1]
         if self.skip_hidden_files and basename.startswith("."):
             return "skip"
@@ -280,7 +274,7 @@ class FileRecognizer:
             return "unreadable"
 
     def walk(self, startpath, direntry=None):
-        """ Walk the tree from a given start path yielding all of the files (not
+        """Walk the tree from a given start path yielding all of the files (not
         directories) and their kinds underneath it depth first.
 
         Paths which are recognized as 'skip', 'link', or 'unreadable' will
@@ -312,8 +306,7 @@ class FileRecognizer:
 
 
 def get_recognizer(args):
-    """ Get the file recognizer object from the configured options.
-    """
+    """Get the file recognizer object from the configured options."""
     # Make sure we have empty sets when we have empty strings.
     skip_dirs = set([x for x in args.skip_dirs.split(",") if x])
     skip_exts = set([x for x in args.skip_exts.split(",") if x])

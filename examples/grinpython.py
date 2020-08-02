@@ -88,9 +88,7 @@ def get_grinpython_arg_parser(parser=None):
     """
     parser = grin.get_grin_arg_parser(parser)
     parser.set_defaults(include="*.py")
-    parser.description = (
-        "Search Python code with strings, comments, and/or code removed."
-    )
+    parser.description = "Search Python code with strings, comments, and/or code removed."
     for action in parser._actions:
         if hasattr(action, "version"):
             action.version = "grinpython %s" % __version__
@@ -102,9 +100,7 @@ def get_grinpython_arg_parser(parser=None):
         action="store_true",
         help="Keep non-string, non-comment Python code.",
     )
-    group.add_argument(
-        "-c", "--comments", action="store_true", help="Keep Python comments."
-    )
+    group.add_argument("-c", "--comments", action="store_true", help="Keep Python comments.")
     group.add_argument(
         "-t",
         "--strings",
@@ -124,9 +120,7 @@ def grinpython_main(argv=None):
     if args.context is not None:
         args.before_context = args.context
         args.after_context = args.context
-    _isatty = (
-        not args.no_color and sys.stdout.isatty() and (os.environ.get("TERM") != "dumb")
-    )
+    _isatty = not args.no_color and sys.stdout.isatty() and (os.environ.get("TERM") != "dumb")
     args.use_color = args.force_color or _isatty
 
     xform = Transformer(args.python_code, args.comments, args.strings)

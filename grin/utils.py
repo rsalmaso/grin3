@@ -42,7 +42,7 @@ def to_str(s):
 
 
 def is_binary_string(bytes):
-    """ Determine if a string is classified as binary rather than text.
+    """Determine if a string is classified as binary rather than text.
 
     Parameters
     ----------
@@ -57,7 +57,7 @@ def is_binary_string(bytes):
 
 
 def get_line_offsets(block):
-    """ Compute the list of offsets in DataBlock 'block' which correspond to
+    """Compute the list of offsets in DataBlock 'block' which correspond to
     the beginnings of new lines.
 
     Returns: (offset list, count of lines in "current block")
@@ -84,8 +84,7 @@ def get_line_offsets(block):
 
 
 def get_regex(args):
-    """ Get the compiled regex object to search with.
-    """
+    """Get the compiled regex object to search with."""
     # Combine all of the flags.
     flags = 0
     for flag in args.re_flags:

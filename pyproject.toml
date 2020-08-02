@@ -4,5 +4,7 @@ exclude = '''
   __pycache__
 )/
 '''
+include = '\.pyi?$'
+line-length = 120
 safe = true
 target-version = ['py35']

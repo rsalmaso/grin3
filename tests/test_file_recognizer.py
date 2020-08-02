@@ -63,7 +63,7 @@ class FilesTextCase(TestCase):
 
     @classmethod
     def fake_gzip_file(cls, filename, open=open):
-        """ Write out a binary file that has the gzip magic header bytes, but is not
+        """Write out a binary file that has the gzip magic header bytes, but is not
         a gzip file.
         """
         with open(filename, "wb") as f:
@@ -72,7 +72,7 @@ class FilesTextCase(TestCase):
 
     @classmethod
     def binary_middle(cls, filename, open=open):
-        """ Write out a file that is text for the first 100 bytes, then 100 binary
+        """Write out a file that is text for the first 100 bytes, then 100 binary
         bytes, then 100 text bytes to test that the recognizer only reads some of
         the file.
         """
@@ -87,29 +87,25 @@ class FilesTextCase(TestCase):
 
     @classmethod
     def unreadable_file(cls, filename):
-        """ Write a file that does not have read permissions.
-        """
+        """Write a file that does not have read permissions."""
         cls.text_file(filename)
         os.chmod(filename, 0o200)
 
     @classmethod
     def unreadable_dir(cls, filename):
-        """ Make a directory that does not have read permissions.
-        """
+        """Make a directory that does not have read permissions."""
         os.mkdir(filename)
         os.chmod(filename, 0o300)
 
     @classmethod
     def unexecutable_dir(cls, filename):
-        """ Make a directory that does not have execute permissions.
-        """
+        """Make a directory that does not have execute permissions."""
         os.mkdir(filename)
         os.chmod(filename, 0o600)
 
     @classmethod
     def totally_unusable_dir(cls, filename):
-        """ Make a directory that has neither read nor execute permissions.
-        """
+        """Make a directory that has neither read nor execute permissions."""
         os.mkdir(filename)
         os.chmod(filename, 0o100)
 
@@ -409,13 +405,9 @@ class FilesTextCase(TestCase):
         self.assertEqual(self._recognize("unreadable_dir_link", fr), "directory")
         self.assertEqual(self._recognize_directory("unreadable_dir_link", fr), "directory")
         self.assertEqual(self._recognize("unexecutable_dir_link", fr), "directory")
-        self.assertEqual(
-            self._recognize_directory("unexecutable_dir_link", fr), "directory"
-        )
+        self.assertEqual(self._recognize_directory("unexecutable_dir_link", fr), "directory")
         self.assertEqual(self._recognize("totally_unusable_dir_link", fr), "directory")
-        self.assertEqual(
-            self._recognize_directory("totally_unusable_dir_link", fr), "directory"
-        )
+        self.assertEqual(self._recognize_directory("totally_unusable_dir_link", fr), "directory")
 
     def test_skip_ext(self):
         fr = FileRecognizer(skip_exts=set([".skip_ext"]))

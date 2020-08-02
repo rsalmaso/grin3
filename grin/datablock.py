@@ -29,7 +29,7 @@ __all__ = ["DataBlock", "EMPTY_DATABLOCK"]
 
 
 class DataBlock:
-    """ This class holds a block of data read from a file, along with
+    """This class holds a block of data read from a file, along with
     some preceding and trailing context.
 
     Attributes

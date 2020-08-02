@@ -33,7 +33,5 @@ setup(
         "Topic :: Utilities",
     ],
     packages=find_packages(),
-    entry_points=dict(
-        console_scripts=["grin = grin.grin:main", "grind = grin.grind:main"]
-    ),
+    entry_points=dict(console_scripts=["grin = grin.grin:main", "grind = grin.grind:main"]),
 )

@@ -30,8 +30,7 @@ import warnings
 
 
 class Options(dict):
-    """ Simple options.
-    """
+    """Simple options."""
 
     def __init__(self, *args, **kwds):
         dict.__init__(self, *args, **kwds)

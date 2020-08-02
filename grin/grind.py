@@ -31,15 +31,15 @@ import os
 import shlex
 import sys
 
-from . import __version__
 from .recognizer import get_recognizer
 
 __all__ = ["get_grind_arg_parser"]
 
 
 def get_grind_arg_parser(parser=None):
-    """ Create the command-line parser for the find-like companion program.
-    """
+    """Create the command-line parser for the find-like companion program."""
+    from . import __version__
+
     if parser is None:
         parser = argparse.ArgumentParser(
             description="Find text and binary files using similar rules as grin.",
@@ -142,18 +142,17 @@ def get_grind_arg_parser(parser=None):
         action="store_true",
         help="print the filenames separated by NULs",
     )
-    parser.add_argument(
-        "--dirs", nargs="+", default=["."], help="the directories to start from"
-    )
-    parser.add_argument(
-        "--sys-path", action="store_true", help="search the directories on sys.path"
-    )
+    parser.add_argument("--dirs", nargs="+", default=["."], help="the directories to start from")
+    parser.add_argument("--sys-path", action="store_true", help="search the directories on sys.path")
 
     parser.add_argument(
         "glob",
         default="*",
         nargs="?",
-        help="the glob pattern to match; you may need to quote this to prevent the shell from trying to expand it [default=%(default)r]",  # noqa: E501
+        help=(  # noqa: E501
+            "the glob pattern to match; you may need to quote this to prevent the shell from trying to expand it"
+            " [default=%(default)r]"
+        ),
     )
 
     return parser
