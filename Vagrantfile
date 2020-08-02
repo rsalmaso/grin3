@@ -26,10 +26,7 @@ apt install --yes \
     python3-pip
 
 mkdir -p /etc/mercurial
-cat >/home/vagrant/.config/hg/hgrc << EOF
-[extensions]
-evolve =
-EOF
+echo "[extensions]\nevolve =\ntopic =\n" >> /etc/mercurial/hgrc
 python3 -m pip install mercurial
 python3 -m pip install hg-evolve
 python3 -m pip install tox
