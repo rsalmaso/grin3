@@ -1,4 +1,4 @@
-# Copyright (C) 2019, Raffaele Salmaso <raffaele@salmaso.org>
+# Copyright (C) 2017-2020, Raffaele Salmaso <raffaele@salmaso.org>
 # Copyright (C) 2007, Enthought, Inc.
 # All rights reserved.
 #
