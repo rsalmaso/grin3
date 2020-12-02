@@ -71,7 +71,7 @@ class GrepText:
             options = default_options
         self.options = options
 
-    def read_block_with_context(self, prev, fp, fp_size):
+    def read_block_with_context(self, prev, fp, fp_size, encoding):
         """Read a block of data from the file, along with some surrounding
         context.
 
@@ -103,7 +103,7 @@ class GrepText:
             is_last_block = target_io_size == remaining
 
         if not isinstance(block_main, str):
-            block_main = to_str(block_main)
+            block_main = to_str(block_main, encoding)
 
         if prev is None:
             if is_last_block:
@@ -141,7 +141,7 @@ class GrepText:
         before_lines = prev.data[before_start : prev.end]
         # Using readline() to force this block out to a newline boundary...
         try:
-            curr_block = prev.data[prev.end :] + block_main + ("" if is_last_block else to_str(fp.readline()))
+            curr_block = prev.data[prev.end :] + block_main + ("" if is_last_block else to_str(fp.readline(), encoding))
         except TypeError as ex:
             print(ex)
             print(prev)
@@ -151,11 +151,11 @@ class GrepText:
         if is_last_block:
             after_lines = ""
         else:
-            after_lines_list = [to_str(fp.readline()) for i in range(self.options.after_context)]
+            after_lines_list = [to_str(fp.readline(), encoding) for i in range(self.options.after_context)]
             after_lines = "".join(after_lines_list)
 
         result = DataBlock(
-            data=to_str(before_lines + curr_block + after_lines),
+            data=to_str(before_lines + curr_block + after_lines, encoding),
             start=len(before_lines),
             end=len(before_lines) + len(curr_block),
             before_count=before_count,
@@ -163,7 +163,7 @@ class GrepText:
         )
         return result
 
-    def do_grep(self, fp):
+    def do_grep(self, fp, encoding="utf8"):
         """Do a full grep.
 
         Parameters
@@ -193,14 +193,14 @@ class GrepText:
                 else:
                     fp_size = None
 
-        block = self.read_block_with_context(None, fp, fp_size)
+        block = self.read_block_with_context(None, fp, fp_size, encoding)
         while block.end > block.start:
             (block_line_count, block_context) = self.do_grep_block(block, line_count - block.before_count)
             context += block_context
             if block.is_last:
                 break
 
-            next_block = self.read_block_with_context(block, fp, fp_size)
+            next_block = self.read_block_with_context(block, fp, fp_size, encoding)
             if next_block.end > next_block.start:
                 if block_line_count is None:
                     # If the file contains N blocks, then in the best case we
@@ -359,7 +359,7 @@ class GrepText:
         text = "".join(lines)
         return text
 
-    def grep_a_file(self, filename, opener=open):
+    def grep_a_file(self, filename, opener=open, encoding="utf8"):
         """Grep a single file that actually exists on the file system.
 
         Parameters
@@ -384,7 +384,7 @@ class GrepText:
             # Always open in binary mode
             f = opener(filename, "rb")
         try:
-            unique_context = self.do_grep(f)
+            unique_context = self.do_grep(f, encoding)
         finally:
             if filename != "-":
                 f.close()

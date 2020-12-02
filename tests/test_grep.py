@@ -55,9 +55,30 @@ barfoobar
 bar
 bar
 """
+utf_8_foo = "Rémy\n".encode("utf8")
+latin_1_foo = "Rémy\n".encode("latin1")
 
 
 class GrepTestCase(TestCase):
+    def test_non_ascii(self):
+        non_ascii = grin.GrepText(re.compile("é"))
+        self.assertEqual(
+            non_ascii.do_grep(BytesIO(utf_8_foo), encoding="utf8"),
+            [(0, 0, "Rémy\n", [(1, 2)])],
+        )
+        self.assertEqual(
+            non_ascii.do_grep(BytesIO(latin_1_foo), encoding="latin1"),
+            [(0, 0, "Rémy\n", [(1, 2)])],
+        )
+
+        self.assertEqual(non_ascii.do_grep(BytesIO(utf_8_foo), encoding="latin1"), [])
+
+        # Fallback to latin1
+        self.assertEqual(
+            non_ascii.do_grep(BytesIO(latin_1_foo), encoding="utf8"),
+            [(0, 0, "Rémy\n", [(1, 2)])],
+        )
+
     def test_basic_defaults(self):
         # Test the basic defaults, no context.
         gt_default = grin.GrepText(re.compile("foo"))

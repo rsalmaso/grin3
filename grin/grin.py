@@ -337,6 +337,13 @@ def get_grin_arg_parser(parser=None):
     )
     parser.add_argument("--sys-path", action="store_true", help="search the directories on sys.path")
 
+    parser.add_argument(
+        "-x",
+        "--encoding",
+        default=sys.stdout.encoding,
+        help="Encoding from which to open the included files from in order for the regex"
+        " and the stdout output to work properly. Default to your terminal output encoding.",
+    )
     parser.add_argument("regex", help="the regular expression to search for")
     parser.add_argument("files", nargs="*", help="the files to search")
 
@@ -362,7 +369,7 @@ def main(argv=None):
         g = GrepText(regex, args)
         openers = dict(text=open, gzip=gzip.open)
         for filename, kind in get_filenames(args):
-            report = g.grep_a_file(filename, opener=openers[kind])
+            report = g.grep_a_file(filename, opener=openers[kind], encoding=args.encoding)
             sys.stdout.write(report)
     except KeyboardInterrupt:
         raise SystemExit(0)
