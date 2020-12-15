@@ -92,15 +92,21 @@ class GrepText:
         -------
         A DataBlock representing the "current" block along with context.
         """
-        if fp_size is None:
+        try:
+            if fp_size is None:
+                target_io_size = READ_BLOCKSIZE
+                block_main = fp.read(target_io_size)
+                is_last_block = len(block_main) < target_io_size
+            else:
+                remaining = max(fp_size - fp.tell(), 0)
+                target_io_size = min(READ_BLOCKSIZE, remaining)
+                block_main = fp.read(target_io_size)
+                is_last_block = target_io_size == remaining
+        except UnicodeDecodeError as e:  # Decode error
+            # Fallback to latin1
             target_io_size = READ_BLOCKSIZE
-            block_main = fp.read(target_io_size)
+            block_main = e.object.decode("latin1")
             is_last_block = len(block_main) < target_io_size
-        else:
-            remaining = max(fp_size - fp.tell(), 0)
-            target_io_size = min(READ_BLOCKSIZE, remaining)
-            block_main = fp.read(target_io_size)
-            is_last_block = target_io_size == remaining
 
         if not isinstance(block_main, str):
             block_main = to_str(block_main)
