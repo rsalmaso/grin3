@@ -68,7 +68,7 @@ def get_filenames(args):
             files_file = sys.stdin
             should_close = False
         elif os.path.exists(args.files_from_file):
-            files_file = codecs.open(args.files_from_file, encoding=sys.stdout.encoding)
+            files_file = codecs.open(args.files_from_file, encoding=args.encoding)
             should_close = True
         else:
             raise IOError(2, "No such file: %r" % args.files_from_file)
@@ -354,6 +354,13 @@ def get_grin_arg_parser(parser=None):
         "--sys-path", action="store_true", help="search the directories on sys.path"
     )
 
+    parser.add_argument(
+        "-x",
+        "--encoding",
+        default=sys.stdout.encoding,
+        help="Encoding from which to open the included files from in order for the regex"
+        " and the stdout output to work properly. Default to your terminal output encoding.",
+    )
     parser.add_argument("regex", help="the regular expression to search for")
     parser.add_argument("files", nargs="*", help="the files to search")
 
@@ -379,9 +386,11 @@ def main(argv=None):
         )
         args.use_color = args.force_color or use_term_color
 
+        encoding = args.encoding
+
         regex = get_regex(args)
         g = GrepText(regex, args)
-        openers = dict(text=partial(codecs.open, encoding=sys.stdout.encoding), gzip=gzip.open)
+        openers = dict(text=partial(codecs.open, encoding=encoding), gzip=gzip.open)
         for filename, kind in get_filenames(args):
             report = g.grep_a_file(filename, opener=openers[kind])
             sys.stdout.write(report)
