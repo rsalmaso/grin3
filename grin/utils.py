@@ -35,10 +35,13 @@ TEXTCHARS = bytes([7, 8, 9, 10, 12, 13, 27] + list(range(0x20, 0x100)))
 ALLBYTES = bytes(range(256))
 
 
-def to_str(s):
+def to_str(s, encoding="utf8"):
     if isinstance(s, str):
         return s
-    return s.decode("latin1")
+    try:
+        return s.decode(encoding)
+    except UnicodeDecodeError:
+        return s.decode('latin1')
 
 
 def is_binary_string(bytes):

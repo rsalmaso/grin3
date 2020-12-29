@@ -26,14 +26,12 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import argparse
-import codecs
 import fnmatch
 import gzip
 import os
 import re
 import shlex
 import sys
-from functools import partial
 
 from . import __version__
 from .main import GrepText
@@ -68,7 +66,7 @@ def get_filenames(args):
             files_file = sys.stdin
             should_close = False
         elif os.path.exists(args.files_from_file):
-            files_file = codecs.open(args.files_from_file, encoding=args.encoding)
+            files_file = open(args.files_from_file)
             should_close = True
         else:
             raise IOError(2, "No such file: %r" % args.files_from_file)
@@ -388,9 +386,9 @@ def main(argv=None):
 
         regex = get_regex(args)
         g = GrepText(regex, args)
-        openers = dict(text=partial(codecs.open, encoding=args.encoding), gzip=gzip.open)
+        openers = dict(text=open, gzip=gzip.open)
         for filename, kind in get_filenames(args):
-            report = g.grep_a_file(filename, opener=openers[kind])
+            report = g.grep_a_file(filename, opener=openers[kind], encoding=args.encoding)
             sys.stdout.write(report)
     except KeyboardInterrupt:
         raise SystemExit(0)
