@@ -386,11 +386,9 @@ def main(argv=None):
         )
         args.use_color = args.force_color or use_term_color
 
-        encoding = args.encoding
-
         regex = get_regex(args)
         g = GrepText(regex, args)
-        openers = dict(text=partial(codecs.open, encoding=encoding), gzip=gzip.open)
+        openers = dict(text=partial(codecs.open, encoding=args.encoding), gzip=gzip.open)
         for filename, kind in get_filenames(args):
             report = g.grep_a_file(filename, opener=openers[kind])
             sys.stdout.write(report)
