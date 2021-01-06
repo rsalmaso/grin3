@@ -7,7 +7,7 @@ files, primarily source code.
  Git (mirror): https://gitlab.com/rsalmaso/grin3
  License:      BSD
 
-grin dev
+grin 2.2.0 is a feature release.
 
   * support for python3.9
   * support for pypy3
