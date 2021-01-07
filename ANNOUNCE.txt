@@ -7,7 +7,7 @@ files, primarily source code.
  Git (mirror): https://gitlab.com/rsalmaso/grin3
  License:      BSD
 
-grin dev
+grin 2.2.1 is a bug-fix release.
 
   * fix missing grind argument
 
