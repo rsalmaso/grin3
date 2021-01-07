@@ -318,6 +318,6 @@ def get_recognizer(args):
         skip_exts=skip_exts,
         skip_symlink_files=not args.follow_symlinks,
         skip_symlink_dirs=not args.follow_symlinks,
-        include=args.include,
+        include=getattr(args, "include", None),
     )
     return fr
