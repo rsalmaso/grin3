@@ -115,6 +115,11 @@ To make the regex case-insensitive::
 
   $ grin -i some_regex
 
+To search for a fixed-string pattern containing regex metacharacters
+without having to manually escape them::
+
+  $ grin -F '[string_with_regex_metachars('
+
 To output 2 lines of context before, after, or both before and after the
 matches::
 

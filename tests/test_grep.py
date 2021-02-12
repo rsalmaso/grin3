@@ -84,6 +84,14 @@ bar
 """
 utf_8_foo = "Rémy\n".encode("utf8")
 latin_1_foo = "Rémy\n".encode("latin1")
+regex_metachar_foo = b"""bar
+bar
+def foo(...):
+bar
+foo
+bar
+bar
+"""
 
 
 class GrepTestCase(TestCase):
@@ -333,4 +341,14 @@ class GrepTestCase(TestCase):
         self.assertEqual(
             gt_after_context_1.do_grep(BytesIO(middle_of_line)),
             [(2, 0, "barfoobar\n", [(3, 6)]), (3, 1, "bar\n", None)],
+        )
+
+    def test_fixed_string_option(self):
+        # -F/--fixed-string works with unescaped regex metachars
+
+        options = grin.Options(fixed_string=True, regex="foo(", re_flags=[], before_context=0, after_context=0)
+        regex_with_metachars = grin.GrepText(grin.utils.get_regex(options))
+        self.assertEqual(
+            regex_with_metachars.do_grep(BytesIO(regex_metachar_foo)),
+            [(2, 0, "def foo(...):\n", [(4, 8)])],
         )

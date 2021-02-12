@@ -148,6 +148,14 @@ def get_grin_arg_parser(parser=None):
         help="ignore case in the regex",
     )
     parser.add_argument(
+        "-F",
+        "--fixed-string",
+        action="store_true",
+        dest="fixed_string",
+        default=False,
+        help="search pattern is fixed string, not regex",
+    )
+    parser.add_argument(
         "-A",
         "--after-context",
         default=0,

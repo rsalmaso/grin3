@@ -59,4 +59,5 @@ default_options = Options(
     skip_symlink_dirs=True,
     skip_symlink_files=True,
     binary_bytes=4096,
+    re_flags=0,
 )
