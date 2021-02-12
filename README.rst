@@ -228,11 +228,9 @@ extract and search text metadata from binary files.
 Development, bugs and such
 --------------------------
 
-The development sources are hosted on Bitbucket (in mercurial format):
-
-  https://bitbucket.org/rsalmaso/grin3
-
-and in git mirrors on
+The source code is managed with mercurial and was hosted on bitbucket,
+now it is waiting for https://foss.heptapod.net/ repository,
+and it is available via git mirrors on
 
   https://github.com/rsalmaso/grin3
 

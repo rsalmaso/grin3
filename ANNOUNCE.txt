@@ -2,9 +2,6 @@ grin is a grep-like tool for recursively searching through text
 files, primarily source code.
 
  Download:     http://pypi.python.org/pypi/grin3
- Hg:           https://bitbucket.org/rsalmaso/grin3
- Git (mirror): https://github.com/rsalmaso/grin3
- Git (mirror): https://gitlab.com/rsalmaso/grin3
  License:      BSD
 
 grin dev
