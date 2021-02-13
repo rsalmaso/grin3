@@ -60,4 +60,5 @@ default_options = Options(
     skip_symlink_files=True,
     binary_bytes=4096,
     re_flags=[],
+    fixed_string=False,
 )
