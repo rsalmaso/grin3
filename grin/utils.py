@@ -92,7 +92,5 @@ def get_regex(args):
     flags = 0
     for flag in args.re_flags:
         flags |= flag
-    pattern = args.regex
-    if args.fixed_string:
-        pattern = re.escape(pattern)
+    pattern = re.escape(args.regex) if args.fixed_string else args.regex
     return re.compile(pattern, flags)
