@@ -66,7 +66,7 @@ def get_grind_arg_parser(parser=None):
         dest="skip_hidden_files",
         action="store_true",
         default=True,
-        help="do skip .hidden files",
+        help=deprecate_option("do skip .hidden files [DEPRECATED]"),
     )
     parser.add_argument(
         "-b",
