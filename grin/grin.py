@@ -208,7 +208,13 @@ def get_grin_arg_parser(parser=None):
         "--without-filename",
         action="store_false",
         dest="show_filename",
-        help="do not show the filenames of files that match",
+        help=deprecate_option("do not show the filenames of files that match [DEPRECATED]"),
+    )
+    parser.add_argument(
+        "--no-filename",
+        action="store_false",
+        dest="show_filename",
+        help="do not show the filenames of files that match (was --without-filename)",
     )
     parser.add_argument(
         "--emacs",
