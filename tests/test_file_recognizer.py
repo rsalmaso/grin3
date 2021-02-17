@@ -350,14 +350,6 @@ class FilesTextCase(TestCase):
         self.assertEqual(self._recognize(".binary.gz", fr), "skip")
         self.assertEqual(self._recognize_file(".binary.gz", fr), "skip")
 
-    def test_skip_backup(self):
-        fr = FileRecognizer(skip_backup_files=True)
-        self.assertEqual(self._recognize_file("text~", fr), "skip")
-
-    def test_do_not_skip_backup(self):
-        fr = FileRecognizer(skip_backup_files=False)
-        self.assertEqual(self._recognize_file("text~", fr), "text")
-
     def test_skip_weird_exts(self):
         fr = FileRecognizer(skip_exts=set())
         self.assertEqual(self._recognize_file("text#", fr), "text")

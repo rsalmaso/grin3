@@ -48,8 +48,6 @@ class FileRecognizer:
         with a "." character.
     skip_hidden_files : bool
         Whether to skip hidden files.
-    skip_backup_files : bool
-        Whether to skip backup files.
     skip_dirs : container of str
         A list of directory names to skip. For example, one might want to skip
         directories named "CVS".
@@ -71,7 +69,6 @@ class FileRecognizer:
         self,
         skip_hidden_dirs=False,
         skip_hidden_files=False,
-        skip_backup_files=False,
         skip_dirs=set(),
         skip_exts=set(),
         skip_symlink_dirs=True,
@@ -81,7 +78,6 @@ class FileRecognizer:
     ):
         self.skip_hidden_dirs = skip_hidden_dirs
         self.skip_hidden_files = skip_hidden_files
-        self.skip_backup_files = skip_backup_files
         self.skip_dirs = skip_dirs
 
         # For speed, split extensions into the simple ones, that are
@@ -240,8 +236,6 @@ class FileRecognizer:
         """Determine what to do with a file."""
         basename = os.path.split(filename)[-1]
         if self.skip_hidden_files and basename.startswith("."):
-            return "skip"
-        if self.skip_backup_files and basename.endswith("~"):
             return "skip"
         if self.skip_symlink_files:
             if direntry is None:
