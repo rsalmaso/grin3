@@ -187,7 +187,7 @@ def get_grin_arg_parser(parser=None):
         action="store_true",
         dest="show_line_numbers",
         default=True,
-        help="show the line numbers [default]",
+        help=deprecate_option("show the line numbers [DEPRECATED]"),
     )
     parser.add_argument(
         "-N",

@@ -10,6 +10,7 @@ grin dev
   * deprecate --[no-]skip-backup-files options, use --skip-exts instead
   * deprecate --with-filename option (as it is the default option)
   * deprecate --without-filename option as an alias for --no-filename option
+  * deprecate --line-number option (as it is the default option)
 
 grin 2.3.1 is a bug-fix release.
 
