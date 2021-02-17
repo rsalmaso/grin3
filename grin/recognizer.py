@@ -310,9 +310,18 @@ def get_recognizer(args):
     # Make sure we have empty sets when we have empty strings.
     skip_dirs = set([x for x in args.skip_dirs.split(",") if x])
     skip_exts = set([x for x in args.skip_exts.split(",") if x])
+
+    # handle deprecated --[no-]-skip-backup-files option
+    if args.skip_backup_files:
+        skip_exts.add("~")
+    elif not args.skip_backup_files:
+        try:
+            skip_exts.remove("~")
+        except KeyError:
+            pass
+
     fr = FileRecognizer(
         skip_hidden_files=args.skip_hidden_files,
-        skip_backup_files=args.skip_backup_files,
         skip_hidden_dirs=args.skip_hidden_dirs,
         skip_dirs=skip_dirs,
         skip_exts=skip_exts,
