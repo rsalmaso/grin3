@@ -202,7 +202,7 @@ def get_grin_arg_parser(parser=None):
         action="store_true",
         dest="show_filename",
         default=True,
-        help="show the filenames of files that match [default]",
+        help=deprecate_option("show the filenames of files that match [DEPRECATED]"),
     )
     parser.add_argument(
         "--without-filename",

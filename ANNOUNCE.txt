@@ -8,6 +8,7 @@ grin dev
 
   * remove deprecated grin.default_options, use grin.Options() instead
   * deprecate --[no-]skip-backup-files options, use --skip-exts instead
+  * deprecate --with-filename option (as it is the default option)
 
 grin 2.3.1 is a bug-fix release.
 
