@@ -35,7 +35,7 @@ import sys
 
 from .main import GrepText
 from .recognizer import get_recognizer
-from .utils import get_regex
+from .utils import deprecate_option, get_regex
 
 __all__ = ["get_filenames", "get_grin_arg_parser"]
 
@@ -267,14 +267,14 @@ def get_grin_arg_parser(parser=None):
         "--no-skip-backup-files",
         dest="skip_backup_files",
         action="store_false",
-        help="do not skip backup~ files [deprecated; edit --skip-exts]",
+        help=deprecate_option("do not skip backup~ files [DEPRECATED edit --skip-exts]"),
     )
     parser.add_argument(
         "--skip-backup-files",
         dest="skip_backup_files",
         action="store_true",
         default=True,
-        help="do skip backup~ files [default] [deprecated; edit --skip-exts]",
+        help=deprecate_option("do skip backup~ files [default] [DEPRECATED edit --skip-exts]"),
     )
     parser.add_argument(
         "-S",
