@@ -28,7 +28,7 @@
 from .grin import get_filenames, get_grin_arg_parser  # noqa: F401
 from .grind import get_grind_arg_parser  # noqa: F401
 from .main import GrepText  # noqa: F401
-from .options import Options, default_options  # noqa: F401
+from .options import Options  # noqa: F401
 from .recognizer import GZIP_MAGIC, FileRecognizer, get_recognizer  # noqa: F401
 from .utils import get_line_offsets, get_regex, is_binary_string  # noqa: F401
 

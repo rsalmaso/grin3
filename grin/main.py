@@ -36,7 +36,7 @@ from io import UnsupportedOperation
 
 from .colors import COLOR_STYLE, colorize
 from .datablock import EMPTY_DATABLOCK, DataBlock
-from .options import default_options
+from .options import Options
 from .utils import get_line_offsets, to_str
 
 __all__ = ["GrepText"]
@@ -68,7 +68,7 @@ class GrepText:
 
         # The options object from parsing the configuration and command line.
         if options is None:
-            options = default_options
+            options = Options()
         self.options = options
 
     def read_block_with_context(self, prev, fp, fp_size, encoding):
