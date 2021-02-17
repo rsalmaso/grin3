@@ -285,8 +285,8 @@ def get_grin_arg_parser(parser=None):
     parser.add_argument(
         "-S",
         "--no-skip-hidden-dirs",
-        dest="skip_hidden_dirs",
         action="store_false",
+        dest="skip_hidden_dirs",
         help="do not skip .hidden directories",
     )
     parser.add_argument(
@@ -294,7 +294,7 @@ def get_grin_arg_parser(parser=None):
         dest="skip_hidden_dirs",
         default=True,
         action="store_true",
-        help="do skip .hidden directories [default]",
+        help=deprecate_option("do skip .hidden directories [DEPRECATED]"),
     )
     parser.add_argument(
         "-d",
