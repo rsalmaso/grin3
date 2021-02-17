@@ -329,7 +329,7 @@ def get_grin_arg_parser(parser=None):
         action="store_false",
         dest="follow_symlinks",
         default=False,
-        help="do not follow symlinks to directories and files [default]",
+        help=deprecate_option("do not follow symlinks to directories and files [DEPRECATED]"),
     )
     parser.add_argument(
         "--follow",
