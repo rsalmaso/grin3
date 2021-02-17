@@ -1,6 +1,10 @@
 Acknowledgements
 ----------------
 
+Charles Cazabon for -F/--fixed-string option.
+
+Rémy HUBSCHER for -x/--encoding option.
+
 Joris Vankerschaver and Matthew Brett for python3 support.
 
 Stefan van der Walt for implementing the --include feature.
