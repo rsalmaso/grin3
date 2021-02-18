@@ -301,9 +301,10 @@ class FileRecognizer:
 
 def get_recognizer(args):
     """Get the file recognizer object from the configured options."""
-    # Make sure we have empty sets when we have empty strings.
-    skip_dirs = set([x for x in args.skip_dirs.split(",") if x])
-    skip_exts = set([x for x in args.skip_exts.split(",") if x])
+
+    # always convert to set
+    skip_dirs = set([x for x in args.skip_dirs.split(",") if x] if isinstance(args.skip_dirs, str) else args.skip_dirs)
+    skip_exts = set([x for x in args.skip_exts.split(",") if x] if isinstance(args.skip_exts, str) else args.skip_exts)
 
     # handle deprecated --[no-]-skip-backup-files option
     if args.skip_backup_files:
