@@ -14,6 +14,8 @@ grin dev
   * deprecate --skip-hidden-dirs option (as it is the default option)
   * deprecate --no-follow option (as it is the default option)
   * deprecate --skip-hidden-files option (as it is the default option)
+  * add --color {auto,no,always} option
+  * deprecate --no-color, --force-color and --use-color options, use --color option instead
 
 grin 2.3.1 is a bug-fix release.
 

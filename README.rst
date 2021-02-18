@@ -145,12 +145,12 @@ To suppress the use of color highlighting::
   # Note that grin does its best to only use color when it detects that it is
   # outputting to a real terminal. If the output is being piped to a file or
   # a pager, then no color will be used.
-  $ grin --no-color some_regex
+  $ grin --color no some_regex
 
 To force the use of color highlighting when piping the output to something that
 is capable of understanding ANSI color escapes::
 
-  $ grin --force-color some_regex | less -R
+  $ grin --color always some_regex | less -R
 
 To avoid recursing into directories named either CVS or RCS::
 

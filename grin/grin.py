@@ -238,21 +238,29 @@ def get_grin_arg_parser(parser=None):
         help="show the matches with the filenames",
     )
     parser.add_argument(
+        "--color",
+        choices=["auto", "no", "always"],
+        default="auto",
+        help="use color output [default=%(default)s]",
+    )
+    parser.add_argument(
         "--no-color",
         action="store_true",
         default=sys.platform == "win32",
-        help="do not use colorized output [default if piping the output]",
+        help=deprecate_option("do not use colorized output [default if piping the output] DEPRECATED"),
     )
     parser.add_argument(
         "--use-color",
         action="store_false",
         dest="no_color",
-        help="use colorized output [default if outputting to a terminal]",
+        help=deprecate_option("use colorized output [default if outputting to a terminal] DEPRECATED"),
     )
     parser.add_argument(
         "--force-color",
         action="store_true",
-        help="always use colorized output even when piping to something that may not be able to handle it",
+        help=deprecate_option(
+            "always use colorized output even when piping to something that may not be able to handle it [DEPRECATED]",
+        ),
     )
     parser.add_argument(
         "-s",
@@ -376,8 +384,12 @@ def main(argv=None):
             args.before_context = args.context
             args.after_context = args.context
 
-        use_term_color = not args.no_color and sys.stdout.isatty() and (os.environ.get("TERM") != "dumb")
-        args.use_color = args.force_color or use_term_color
+        isatty = sys.stdout.isatty() and (os.environ.get("TERM") != "dumb")
+        if "--no-color" in sys.argv or "--use-color" in sys.argv or "--force-color" in sys.argv:
+            # use deprecated options
+            args.use_color = args.force_color or (not args.no_color and isatty)
+        else:
+            args.use_color = (args.color == "auto" and isatty) or args.color == "always"
 
         regex = get_regex(args)
         g = GrepText(regex, args)
