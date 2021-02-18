@@ -127,7 +127,6 @@ def get_grin_arg_parser(parser=None):
     if parser is None:
         parser = argparse.ArgumentParser(
             description="Search text files for a given regex pattern.",
-            epilog="Bug reports to <enthought-dev@mail.enthought.com>.",
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
 
