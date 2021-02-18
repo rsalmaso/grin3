@@ -43,6 +43,7 @@ def get_grind_arg_parser(parser=None):
     if parser is None:
         parser = argparse.ArgumentParser(
             description="Find text and binary files using similar rules as grin.",
+            epilog="To show DEPRECATED options add --help-verbose option.",
         )
 
     parser.add_argument(

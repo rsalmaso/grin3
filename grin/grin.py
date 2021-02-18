@@ -127,6 +127,7 @@ def get_grin_arg_parser(parser=None):
     if parser is None:
         parser = argparse.ArgumentParser(
             description="Search text files for a given regex pattern.",
+            epilog="To show DEPRECATED options add --help-verbose option.",
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
 
