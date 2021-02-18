@@ -314,7 +314,7 @@ def get_recognizer(args):
         except KeyError:
             pass
 
-    fr = FileRecognizer(
+    return FileRecognizer(
         skip_hidden_files=args.skip_hidden_files,
         skip_hidden_dirs=args.skip_hidden_dirs,
         skip_dirs=skip_dirs,
@@ -323,4 +323,3 @@ def get_recognizer(args):
         skip_symlink_dirs=not args.follow_symlinks,
         include=getattr(args, "include", None),
     )
-    return fr
