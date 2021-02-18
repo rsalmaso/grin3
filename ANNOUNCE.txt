@@ -4,7 +4,10 @@ files, primarily source code.
  Download:     http://pypi.python.org/pypi/grin3
  License:      BSD
 
-grin dev
+grin 2.4.0 is a feature release.
+
+  grin 2.4.X will be a deprecation release(s) where many options and code will be deprecated and
+  hidden by default (their usage will be under --help-verbose cli flag)
 
   * remove deprecated grin.default_options, use grin.Options() instead
   * deprecate --[no-]skip-backup-files options, use --skip-exts instead
