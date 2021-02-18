@@ -384,9 +384,9 @@ def main(argv=None):
             args.before_context = args.context
             args.after_context = args.context
 
+        # handle deprecated --{no,use,force}-color options
         isatty = sys.stdout.isatty() and (os.environ.get("TERM") != "dumb")
         if "--no-color" in sys.argv or "--use-color" in sys.argv or "--force-color" in sys.argv:
-            # use deprecated options
             args.use_color = args.force_color or (not args.no_color and isatty)
         else:
             args.use_color = (args.color == "auto" and isatty) or args.color == "always"
