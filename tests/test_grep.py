@@ -92,6 +92,14 @@ foo
 bar
 bar
 """
+word_boundaries = b"""bar
+This is a test.
+baz
+"""
+unicode_digits = b"""This contains
+an Arabic-Indic digit \xd9\xa2 on the
+second line.
+"""
 
 
 class GrepTestCase(TestCase):
@@ -351,4 +359,43 @@ class GrepTestCase(TestCase):
         self.assertEqual(
             regex_with_metachars.do_grep(BytesIO(regex_metachar_foo)),
             [(2, 0, "def foo(...):\n", [(4, 8)])],
+        )
+
+    def test_word_match_option(self):
+        # -w/--word-regexp
+
+        # Not a word-match
+        options = grin.Options(word_regexp=True, regex="tes", re_flags=[], before_context=0, after_context=0)
+        regex_on_word_boundaries = grin.GrepText(grin.utils.get_regex(options))
+        self.assertEqual(
+            regex_on_word_boundaries.do_grep(BytesIO(word_boundaries)),
+            [],
+        )
+
+        # Word-match
+        options = grin.Options(word_regexp=True, regex="test", re_flags=[], before_context=0, after_context=0)
+        regex_on_word_boundaries = grin.GrepText(grin.utils.get_regex(options))
+        self.assertEqual(
+            regex_on_word_boundaries.do_grep(BytesIO(word_boundaries)),
+            [(1, 0, 'This is a test.\n', [(10, 14)])],
+        )
+
+    def test_unicode(self):
+        # -u/--unicode
+
+        # No match when unicode not in effect
+        options = grin.Options(unicode=False, regex=r"\d", re_flags=[], before_context=0, after_context=0)
+        regex_unicode = grin.GrepText(grin.utils.get_regex(options))
+        self.assertEqual(
+            regex_unicode.do_grep(BytesIO(unicode_digits)),
+            [],
+        )
+        # [(1, 0, 'an Arabic-Indic digit ٢ on the\n', [(22, 23)])]
+
+        # Unicode (default)
+        options = grin.Options(regex=r"\d", re_flags=[], before_context=0, after_context=0)
+        regex_unicode = grin.GrepText(grin.utils.get_regex(options))
+        self.assertEqual(
+            regex_unicode.do_grep(BytesIO(unicode_digits)),
+            [(1, 0, 'an Arabic-Indic digit ٢ on the\n', [(22, 23)])],
         )
