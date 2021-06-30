@@ -139,6 +139,15 @@ def get_grin_arg_parser(parser=None):
         help="show program's version number and exit",
     )
     parser.add_argument(
+        "-a",
+        "--ascii",
+        action="append_const",
+        dest="re_flags",
+        const=re.A,
+        default=[],
+        help="force ASCII-only definitions of digits, word boundaries, etc",
+    )
+    parser.add_argument(
         "-i",
         "--ignore-case",
         action="append_const",
