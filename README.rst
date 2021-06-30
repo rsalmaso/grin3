@@ -125,6 +125,11 @@ whitespace (\s,\S), etc.  To force ASCII-only interpretation of these character 
 
   $ grin -a pattern
 
+To search for a pattern that begins and ends on a word boundary (no partial-
+word matches):
+
+  $ grin -w myword
+
 To output 2 lines of context before, after, or both before and after the
 matches::
 

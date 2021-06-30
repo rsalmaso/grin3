@@ -96,7 +96,10 @@ unicode_digits = b"""This contains
 an Arabic-Indic digit \xd9\xa2 on the
 second line.
 """
-
+word_boundaries = b"""bar
+This is a test.
+baz
+"""
 
 class GrepTestCase(TestCase):
     def test_non_ascii(self):
@@ -375,4 +378,23 @@ class GrepTestCase(TestCase):
         self.assertEqual(
             regex_unicode.do_grep(BytesIO(unicode_digits)),
             [(1, 0, 'an Arabic-Indic digit ٢ on the\n', [(22, 23)])],
+        )
+
+    def test_word_match_option(self):
+        # -w/--word-regexp
+
+        # Not a word-match
+        options = grin.Options(word_regexp=True, regex="tes", re_flags=[], before_context=0, after_context=0)
+        regex_on_word_boundaries = grin.GrepText(grin.utils.get_regex(options))
+        self.assertEqual(
+            regex_on_word_boundaries.do_grep(BytesIO(word_boundaries)),
+            [],
+        )
+
+        # Word-match
+        options = grin.Options(word_regexp=True, regex="test", re_flags=[], before_context=0, after_context=0)
+        regex_on_word_boundaries = grin.GrepText(grin.utils.get_regex(options))
+        self.assertEqual(
+            regex_on_word_boundaries.do_grep(BytesIO(word_boundaries)),
+            [(1, 0, 'This is a test.\n', [(10, 14)])],
         )

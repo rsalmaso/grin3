@@ -49,4 +49,5 @@ class Options(dict):
         self.setdefault("binary_bytes", 4096)
         self.setdefault("re_flags", [])
         self.setdefault("fixed_string", False)
+        self.setdefault("word_regexp", False)
         self.__dict__ = self
