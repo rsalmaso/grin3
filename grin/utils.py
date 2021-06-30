@@ -98,9 +98,5 @@ def get_regex(args):
     flags = 0
     for flag in args.re_flags:
         flags |= flag
-    if not args.unicode:
-        flags |= re.ASCII
     pattern = re.escape(args.regex) if args.fixed_string else args.regex
-    if args.word_regexp:
-        pattern = r"\b" + pattern + r"\b"
     return re.compile(pattern, flags)

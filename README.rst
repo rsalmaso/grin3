@@ -120,16 +120,6 @@ without having to manually escape them::
 
   $ grin -F '[string_with_regex_metachars('
 
-To search for a pattern that begins and ends on a word boundary (no partial-
-word matches):
-
-  $ grin -w myword
-
-By default, grin uses Unicode definitions of digits (\d,\D), word boundaries (\b,\B), etc.
-To force ASCII-only:
-
-  $ grin -a pattern
-
 To output 2 lines of context before, after, or both before and after the
 matches::
 

@@ -156,29 +156,6 @@ def get_grin_arg_parser(parser=None):
         help="search pattern is fixed string, not regex",
     )
     parser.add_argument(
-        "-u",
-        "--unicode",
-        action="store_true",
-        dest="unicode",
-        default=True,
-        help="enable Unicode definitions of digits, word boundaries, etc [default=%(default)r]",
-    )
-    parser.add_argument(
-        "-a",
-        "--ascii",
-        action="store_false",
-        dest="unicode",
-        help="enable ASCII definitions of digits, word boundaries, etc",
-    )
-    parser.add_argument(
-        "-w",
-        "--word-regexp",
-        action="store_true",
-        dest="word_regexp",
-        default=False,
-        help="match pattern only on word boundaries",
-    )
-    parser.add_argument(
         "-A",
         "--after-context",
         default=0,
