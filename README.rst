@@ -120,6 +120,11 @@ without having to manually escape them::
 
   $ grin -F '[string_with_regex_metachars('
 
+By default, grin uses Unicode definitions of digits (\d,\D), word boundaries (\b,\B),
+whitespace (\s,\S), etc.  To force ASCII-only interpretation of these character classes:
+
+  $ grin -a pattern
+
 To output 2 lines of context before, after, or both before and after the
 matches::
 

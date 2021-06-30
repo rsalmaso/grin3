@@ -92,6 +92,10 @@ foo
 bar
 bar
 """
+unicode_digits = b"""This contains
+an Arabic-Indic digit \xd9\xa2 on the
+second line.
+"""
 
 
 class GrepTestCase(TestCase):
@@ -351,4 +355,24 @@ class GrepTestCase(TestCase):
         self.assertEqual(
             regex_with_metachars.do_grep(BytesIO(regex_metachar_foo)),
             [(2, 0, "def foo(...):\n", [(4, 8)])],
+        )
+
+    def test_ascii(self):
+        # -a/--ascii
+
+        # No match when in ascii mode
+        options = grin.Options(regex=r"\d", re_flags=[re.A], before_context=0, after_context=0)
+        regex_unicode = grin.GrepText(grin.utils.get_regex(options))
+        self.assertEqual(
+            regex_unicode.do_grep(BytesIO(unicode_digits)),
+            [],
+        )
+        # [(1, 0, 'an Arabic-Indic digit ٢ on the\n', [(22, 23)])]
+
+        # Unicode (default)
+        options = grin.Options(regex=r"\d", re_flags=[], before_context=0, after_context=0)
+        regex_unicode = grin.GrepText(grin.utils.get_regex(options))
+        self.assertEqual(
+            regex_unicode.do_grep(BytesIO(unicode_digits)),
+            [(1, 0, 'an Arabic-Indic digit ٢ on the\n', [(22, 23)])],
         )
