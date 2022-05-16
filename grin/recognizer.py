@@ -48,8 +48,6 @@ class FileRecognizer:
         with a "." character.
     skip_hidden_files : bool
         Whether to skip hidden files.
-    skip_backup_files : bool
-        Whether to skip backup files.
     skip_dirs : container of str
         A list of directory names to skip. For example, one might want to skip
         directories named "CVS".
@@ -71,7 +69,6 @@ class FileRecognizer:
         self,
         skip_hidden_dirs=False,
         skip_hidden_files=False,
-        skip_backup_files=False,
         skip_dirs=set(),
         skip_exts=set(),
         skip_symlink_dirs=True,
@@ -81,7 +78,6 @@ class FileRecognizer:
     ):
         self.skip_hidden_dirs = skip_hidden_dirs
         self.skip_hidden_files = skip_hidden_files
-        self.skip_backup_files = skip_backup_files
         self.skip_dirs = skip_dirs
 
         # For speed, split extensions into the simple ones, that are
@@ -241,8 +237,6 @@ class FileRecognizer:
         basename = os.path.split(filename)[-1]
         if self.skip_hidden_files and basename.startswith("."):
             return "skip"
-        if self.skip_backup_files and basename.endswith("~"):
-            return "skip"
         if self.skip_symlink_files:
             if direntry is None:
                 if os.path.islink(filename):
@@ -307,12 +301,22 @@ class FileRecognizer:
 
 def get_recognizer(args):
     """Get the file recognizer object from the configured options."""
-    # Make sure we have empty sets when we have empty strings.
-    skip_dirs = set([x for x in args.skip_dirs.split(",") if x])
-    skip_exts = set([x for x in args.skip_exts.split(",") if x])
-    fr = FileRecognizer(
+
+    # always convert to set
+    skip_dirs = set([x for x in args.skip_dirs.split(",") if x] if isinstance(args.skip_dirs, str) else args.skip_dirs)
+    skip_exts = set([x for x in args.skip_exts.split(",") if x] if isinstance(args.skip_exts, str) else args.skip_exts)
+
+    # handle deprecated --[no-]-skip-backup-files option
+    if args.skip_backup_files:
+        skip_exts.add("~")
+    elif not args.skip_backup_files:
+        try:
+            skip_exts.remove("~")
+        except KeyError:
+            pass
+
+    return FileRecognizer(
         skip_hidden_files=args.skip_hidden_files,
-        skip_backup_files=args.skip_backup_files,
         skip_hidden_dirs=args.skip_hidden_dirs,
         skip_dirs=skip_dirs,
         skip_exts=skip_exts,
@@ -320,4 +324,3 @@ def get_recognizer(args):
         skip_symlink_dirs=not args.follow_symlinks,
         include=getattr(args, "include", None),
     )
-    return fr

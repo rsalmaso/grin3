@@ -35,7 +35,7 @@ import sys
 
 from .main import GrepText
 from .recognizer import get_recognizer
-from .utils import get_regex
+from .utils import deprecate_option, get_regex
 
 __all__ = ["get_filenames", "get_grin_arg_parser"]
 
@@ -127,7 +127,7 @@ def get_grin_arg_parser(parser=None):
     if parser is None:
         parser = argparse.ArgumentParser(
             description="Search text files for a given regex pattern.",
-            epilog="Bug reports to <enthought-dev@mail.enthought.com>.",
+            epilog="To show DEPRECATED options add --help-verbose option.",
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
 
@@ -139,6 +139,15 @@ def get_grin_arg_parser(parser=None):
         help="show program's version number and exit",
     )
     parser.add_argument(
+        "-a",
+        "--ascii",
+        action="append_const",
+        dest="re_flags",
+        const=re.A,
+        default=[],
+        help="force ASCII-only definitions of digits, word boundaries, etc",
+    )
+    parser.add_argument(
         "-i",
         "--ignore-case",
         action="append_const",
@@ -146,6 +155,22 @@ def get_grin_arg_parser(parser=None):
         const=re.I,
         default=[],
         help="ignore case in the regex",
+    )
+    parser.add_argument(
+        "-F",
+        "--fixed-string",
+        action="store_true",
+        dest="fixed_string",
+        default=False,
+        help="search pattern is fixed string, not regex",
+    )
+    parser.add_argument(
+        "-w",
+        "--word-regexp",
+        action="store_true",
+        dest="word_regexp",
+        default=False,
+        help="match pattern only on word boundaries",
     )
     parser.add_argument(
         "-A",
@@ -179,7 +204,7 @@ def get_grin_arg_parser(parser=None):
         action="store_true",
         dest="show_line_numbers",
         default=True,
-        help="show the line numbers [default]",
+        help=deprecate_option("show the line numbers [DEPRECATED]"),
     )
     parser.add_argument(
         "-N",
@@ -194,13 +219,19 @@ def get_grin_arg_parser(parser=None):
         action="store_true",
         dest="show_filename",
         default=True,
-        help="show the filenames of files that match [default]",
+        help=deprecate_option("show the filenames of files that match [DEPRECATED]"),
     )
     parser.add_argument(
         "--without-filename",
         action="store_false",
         dest="show_filename",
-        help="do not show the filenames of files that match",
+        help=deprecate_option("do not show the filenames of files that match [DEPRECATED]"),
+    )
+    parser.add_argument(
+        "--no-filename",
+        action="store_false",
+        dest="show_filename",
+        help="do not show the filenames of files that match (was --without-filename)",
     )
     parser.add_argument(
         "--emacs",
@@ -224,21 +255,29 @@ def get_grin_arg_parser(parser=None):
         help="show the matches with the filenames",
     )
     parser.add_argument(
+        "--color",
+        choices=["auto", "no", "always"],
+        default="auto",
+        help="use color output [default=%(default)s]",
+    )
+    parser.add_argument(
         "--no-color",
         action="store_true",
         default=sys.platform == "win32",
-        help="do not use colorized output [default if piping the output]",
+        help=deprecate_option("do not use colorized output [default if piping the output] DEPRECATED"),
     )
     parser.add_argument(
         "--use-color",
         action="store_false",
         dest="no_color",
-        help="use colorized output [default if outputting to a terminal]",
+        help=deprecate_option("use colorized output [default if outputting to a terminal] DEPRECATED"),
     )
     parser.add_argument(
         "--force-color",
         action="store_true",
-        help="always use colorized output even when piping to something that may not be able to handle it",
+        help=deprecate_option(
+            "always use colorized output even when piping to something that may not be able to handle it [DEPRECATED]",
+        ),
     )
     parser.add_argument(
         "-s",
@@ -252,27 +291,27 @@ def get_grin_arg_parser(parser=None):
         dest="skip_hidden_files",
         action="store_true",
         default=True,
-        help="do skip .hidden files [default]",
+        help=deprecate_option("do skip .hidden files [DEPRECATED]"),
     )
     parser.add_argument(
         "-b",
         "--no-skip-backup-files",
         dest="skip_backup_files",
         action="store_false",
-        help="do not skip backup~ files [deprecated; edit --skip-exts]",
+        help=deprecate_option("do not skip backup~ files [DEPRECATED edit --skip-exts]"),
     )
     parser.add_argument(
         "--skip-backup-files",
         dest="skip_backup_files",
         action="store_true",
         default=True,
-        help="do skip backup~ files [default] [deprecated; edit --skip-exts]",
+        help=deprecate_option("do skip backup~ files [default] [DEPRECATED edit --skip-exts]"),
     )
     parser.add_argument(
         "-S",
         "--no-skip-hidden-dirs",
-        dest="skip_hidden_dirs",
         action="store_false",
+        dest="skip_hidden_dirs",
         help="do not skip .hidden directories",
     )
     parser.add_argument(
@@ -280,7 +319,7 @@ def get_grin_arg_parser(parser=None):
         dest="skip_hidden_dirs",
         default=True,
         action="store_true",
-        help="do skip .hidden directories [default]",
+        help=deprecate_option("do skip .hidden directories [DEPRECATED]"),
     )
     parser.add_argument(
         "-d",
@@ -315,7 +354,7 @@ def get_grin_arg_parser(parser=None):
         action="store_false",
         dest="follow_symlinks",
         default=False,
-        help="do not follow symlinks to directories and files [default]",
+        help=deprecate_option("do not follow symlinks to directories and files [DEPRECATED]"),
     )
     parser.add_argument(
         "--follow",
@@ -362,8 +401,12 @@ def main(argv=None):
             args.before_context = args.context
             args.after_context = args.context
 
-        use_term_color = not args.no_color and sys.stdout.isatty() and (os.environ.get("TERM") != "dumb")
-        args.use_color = args.force_color or use_term_color
+        # handle deprecated --{no,use,force}-color options
+        isatty = sys.stdout.isatty() and (os.environ.get("TERM") != "dumb")
+        if "--no-color" in sys.argv or "--use-color" in sys.argv or "--force-color" in sys.argv:
+            args.use_color = args.force_color or (not args.no_color and isatty)
+        else:
+            args.use_color = (args.color == "auto" and isatty) or args.color == "always"
 
         regex = get_regex(args)
         g = GrepText(regex, args)

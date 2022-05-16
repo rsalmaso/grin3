@@ -1,7 +1,7 @@
 This software is OSI Certified Open Source Software.
 OSI Certified is a certification mark of the Open Source Initiative.
 
-Copyright (C) 2017-2020, Raffaele Salmaso <raffaele@salmaso.org>
+Copyright (C) 2017-2021, Raffaele Salmaso <raffaele@salmaso.org>
 Copyright (C) 2007, Enthought, Inc.
 All rights reserved.
 

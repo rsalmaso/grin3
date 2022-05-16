@@ -25,7 +25,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import argparse
 import re
+import sys
 
 __all__ = ["get_line_offsets", "get_regex", "is_binary_string", "to_str"]
 
@@ -33,6 +35,10 @@ __all__ = ["get_line_offsets", "get_regex", "is_binary_string", "to_str"]
 # Use file(1)'s choices for what's text and what's not.
 TEXTCHARS = bytes([7, 8, 9, 10, 12, 13, 27] + list(range(0x20, 0x100)))
 ALLBYTES = bytes(range(256))
+
+
+def deprecate_option(msg):
+    return msg if "--help-verbose" in sys.argv else argparse.SUPPRESS
 
 
 def to_str(s, encoding="utf8"):
@@ -92,4 +98,7 @@ def get_regex(args):
     flags = 0
     for flag in args.re_flags:
         flags |= flag
-    return re.compile(args.regex, flags)
+    pattern = re.escape(args.regex) if args.fixed_string else args.regex
+    if args.word_regexp:
+        pattern = r"\b" + pattern + r"\b"
+    return re.compile(pattern, flags)

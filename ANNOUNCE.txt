@@ -2,10 +2,40 @@ grin is a grep-like tool for recursively searching through text
 files, primarily source code.
 
  Download:     http://pypi.python.org/pypi/grin3
- Hg:           https://bitbucket.org/rsalmaso/grin3
- Git (mirror): https://github.com/rsalmaso/grin3
- Git (mirror): https://gitlab.com/rsalmaso/grin3
  License:      BSD
+
+grin 2.5.0 is a feature release.
+
+  * add -a/--ascii option (thanks Charles Cazabon)
+  * add -w/--word-regexp option (thanks Charles Cazabon)
+
+grin 2.4.1 is a bug-fix release.
+
+  * minor code tweaks
+
+grin 2.4.0 is a feature release.
+
+  grin 2.4.X will be a deprecation release(s) where many options and code will be deprecated and
+  hidden by default (their usage will be under --help-verbose cli flag)
+
+  * remove deprecated grin.default_options, use grin.Options() instead
+  * deprecate --[no-]skip-backup-files options, use --skip-exts instead
+  * deprecate --with-filename option (as it is the default option)
+  * deprecate --without-filename option as an alias for --no-filename option
+  * deprecate --line-number option (as it is the default option)
+  * deprecate --skip-hidden-dirs option (as it is the default option)
+  * deprecate --no-follow option (as it is the default option)
+  * deprecate --skip-hidden-files option (as it is the default option)
+  * add --color {auto,no,always} option
+  * deprecate --no-color, --force-color and --use-color options, use --color option instead
+
+grin 2.3.1 is a bug-fix release.
+
+  * correct default Options.re_flags value
+
+grin 2.3.0 is a feature release.
+
+  * add -F/--fixed-string option (thanks Charles Cazabon)
 
 grin 2.2.1 is a bug-fix release.
 

@@ -32,6 +32,7 @@ import shlex
 import sys
 
 from .recognizer import get_recognizer
+from .utils import deprecate_option
 
 __all__ = ["get_grind_arg_parser"]
 
@@ -43,7 +44,7 @@ def get_grind_arg_parser(parser=None):
     if parser is None:
         parser = argparse.ArgumentParser(
             description="Find text and binary files using similar rules as grin.",
-            epilog="Bug reports to <enthought-dev@mail.enthought.com>.",
+            epilog="To show DEPRECATED options add --help-verbose option.",
         )
 
     parser.add_argument(
@@ -65,27 +66,27 @@ def get_grind_arg_parser(parser=None):
         dest="skip_hidden_files",
         action="store_true",
         default=True,
-        help="do skip .hidden files",
+        help=deprecate_option("do skip .hidden files [DEPRECATED]"),
     )
     parser.add_argument(
         "-b",
         "--no-skip-backup-files",
         dest="skip_backup_files",
         action="store_false",
-        help="do not skip backup~ files [deprecated; edit --skip-exts]",
+        help=deprecate_option("do not skip backup~ files [DEPRECATED edit --skip-exts]"),
     )
     parser.add_argument(
         "--skip-backup-files",
         dest="skip_backup_files",
         action="store_true",
         default=True,
-        help="do skip backup~ files [default] [deprecated; edit --skip-exts]",
+        help=deprecate_option("do skip backup~ files [default] [DEPRECATED edit --skip-exts]"),
     )
     parser.add_argument(
         "-S",
         "--no-skip-hidden-dirs",
-        dest="skip_hidden_dirs",
         action="store_false",
+        dest="skip_hidden_dirs",
         help="do not skip .hidden directories",
     )
     parser.add_argument(
@@ -93,7 +94,7 @@ def get_grind_arg_parser(parser=None):
         dest="skip_hidden_dirs",
         default=True,
         action="store_true",
-        help="do skip .hidden directories",
+        help=deprecate_option("do skip .hidden directories [DEPRECATED]"),
     )
     parser.add_argument(
         "-d",
@@ -128,7 +129,7 @@ def get_grind_arg_parser(parser=None):
         action="store_false",
         dest="follow_symlinks",
         default=False,
-        help="do not follow symlinks to directories and files [default]",
+        help=deprecate_option("do not follow symlinks to directories and files [DEPRECATED]"),
     )
     parser.add_argument(
         "--follow",

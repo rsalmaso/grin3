@@ -25,38 +25,29 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-__all__ = ["default_options", "Options"]
-import warnings
+__all__ = ["Options"]
 
 
 class Options(dict):
     """Simple options."""
 
-    def __init__(self, *args, **kwds):
-        dict.__init__(self, *args, **kwds)
+    def __init__(self, *args, **kwargs):
+        dict.__init__(self, *args, **kwargs)
+        self.setdefault("before_context", 0)
+        self.setdefault("after_context", 0)
+        self.setdefault("show_line_numbers", True)
+        self.setdefault("show_match", True)
+        self.setdefault("show_filename", True)
+        self.setdefault("show_emacs", False)
+        self.setdefault("skip_hidden_dirs", False)
+        self.setdefault("skip_backup_files", True)
+        self.setdefault("skip_hidden_files", False)
+        self.setdefault("skip_dirs", set())
+        self.setdefault("skip_exts", set())
+        self.setdefault("skip_symlink_dirs", True)
+        self.setdefault("skip_symlink_files", True)
+        self.setdefault("binary_bytes", 4096)
+        self.setdefault("re_flags", [])
+        self.setdefault("fixed_string", False)
+        self.setdefault("word_regexp", False)
         self.__dict__ = self
-
-    def __call__(self):
-        warnings.warn(
-            "calling default_options is deprecated, it will removed in next version.",
-            DeprecationWarning,
-        )
-        return self
-
-
-default_options = Options(
-    before_context=0,
-    after_context=0,
-    show_line_numbers=True,
-    show_match=True,
-    show_filename=True,
-    show_emacs=False,
-    skip_hidden_dirs=False,
-    skip_hidden_files=False,
-    skip_backup_files=True,
-    skip_dirs=set(),
-    skip_exts=set(),
-    skip_symlink_dirs=True,
-    skip_symlink_files=True,
-    binary_bytes=4096,
-)

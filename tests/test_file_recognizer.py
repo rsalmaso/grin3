@@ -350,14 +350,6 @@ class FilesTextCase(TestCase):
         self.assertEqual(self._recognize(".binary.gz", fr), "skip")
         self.assertEqual(self._recognize_file(".binary.gz", fr), "skip")
 
-    def test_skip_backup(self):
-        fr = FileRecognizer(skip_backup_files=True)
-        self.assertEqual(self._recognize_file("text~", fr), "skip")
-
-    def test_do_not_skip_backup(self):
-        fr = FileRecognizer(skip_backup_files=False)
-        self.assertEqual(self._recognize_file("text~", fr), "text")
-
     def test_skip_weird_exts(self):
         fr = FileRecognizer(skip_exts=set())
         self.assertEqual(self._recognize_file("text#", fr), "text")
@@ -437,7 +429,7 @@ class FilesTextCase(TestCase):
         self.assertEqual(self._recognize_directory("totally_unusable_dir_link", fr), "directory")
 
     def test_skip_ext(self):
-        fr = FileRecognizer(skip_exts=set([".skip_ext"]))
+        fr = FileRecognizer(skip_exts=set([".skip_ext", "~"]))
         self.assertEqual(self._recognize("text.skip_ext", fr), "skip")
         self.assertEqual(self._recognize_file("text.skip_ext", fr), "skip")
         self.assertEqual(self._recognize("text", fr), "text")
@@ -446,6 +438,7 @@ class FilesTextCase(TestCase):
         self.assertEqual(self._recognize_file("text.dont_skip_ext", fr), "text")
         self.assertEqual(self._recognize("dir.skip_ext", fr), "directory")
         self.assertEqual(self._recognize_directory("dir.skip_ext", fr), "directory")
+        self.assertEqual(self._recognize_file("text~", fr), "skip")
 
     def test_skip_dir(self):
         fr = FileRecognizer(skip_dirs=set(["skip_dir", "fake_skip_dir"]))

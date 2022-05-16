@@ -28,7 +28,7 @@
 from .grin import get_filenames, get_grin_arg_parser  # noqa: F401
 from .grind import get_grind_arg_parser  # noqa: F401
 from .main import GrepText  # noqa: F401
-from .options import Options, default_options  # noqa: F401
+from .options import Options  # noqa: F401
 from .recognizer import GZIP_MAGIC, FileRecognizer, get_recognizer  # noqa: F401
 from .utils import get_line_offsets, get_regex, is_binary_string  # noqa: F401
 
@@ -56,7 +56,7 @@ def get_version(version=None):
 
 
 # Constants
-VERSION = (2, 2, 1, "final", 0)
+VERSION = (2, 5, 0, "final", 0)
 __version__ = get_version(VERSION)
 __author__ = "Robert Kern"
 __author_email__ = "robert.kern@enthought.com"

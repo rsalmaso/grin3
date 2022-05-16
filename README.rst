@@ -115,6 +115,21 @@ To make the regex case-insensitive::
 
   $ grin -i some_regex
 
+To search for a fixed-string pattern containing regex metacharacters
+without having to manually escape them::
+
+  $ grin -F '[string_with_regex_metachars('
+
+By default, grin uses Unicode definitions of digits (\d,\D), word boundaries (\b,\B),
+whitespace (\s,\S), etc.  To force ASCII-only interpretation of these character classes:
+
+  $ grin -a pattern
+
+To search for a pattern that begins and ends on a word boundary (no partial-
+word matches):
+
+  $ grin -w myword
+
 To output 2 lines of context before, after, or both before and after the
 matches::
 
@@ -140,12 +155,12 @@ To suppress the use of color highlighting::
   # Note that grin does its best to only use color when it detects that it is
   # outputting to a real terminal. If the output is being piped to a file or
   # a pager, then no color will be used.
-  $ grin --no-color some_regex
+  $ grin --color no some_regex
 
 To force the use of color highlighting when piping the output to something that
 is capable of understanding ANSI color escapes::
 
-  $ grin --force-color some_regex | less -R
+  $ grin --color always some_regex | less -R
 
 To avoid recursing into directories named either CVS or RCS::
 
@@ -223,11 +238,9 @@ extract and search text metadata from binary files.
 Development, bugs and such
 --------------------------
 
-The development sources are hosted on Bitbucket (in mercurial format):
-
-  https://bitbucket.org/rsalmaso/grin3
-
-and in git mirrors on
+The source code is managed with mercurial and was hosted on bitbucket,
+now it is waiting for https://foss.heptapod.net/ repository,
+and it is available via git mirrors on
 
   https://github.com/rsalmaso/grin3
 
