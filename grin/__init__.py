@@ -56,7 +56,7 @@ def get_version(version=None):
 
 
 # Constants
-VERSION = (2, 5, 0, "final", 0)
+VERSION = (2, 6, 0, "final", 0)
 __version__ = get_version(VERSION)
 __author__ = "Robert Kern"
 __author_email__ = "robert.kern@enthought.com"
