@@ -7,6 +7,7 @@ files, primarily source code.
 grin dev
 
   * add support for Python 3.10
+  * add support for Python 3.11
 
 grin 2.5.0 is a feature release.
 
