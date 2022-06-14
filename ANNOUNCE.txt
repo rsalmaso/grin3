@@ -4,6 +4,10 @@ files, primarily source code.
  Download:     http://pypi.python.org/pypi/grin3
  License:      BSD
 
+grin dev
+
+  * add support for Python 3.10
+
 grin 2.5.0 is a feature release.
 
   * add -a/--ascii option (thanks Charles Cazabon)
