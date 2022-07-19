@@ -101,6 +101,7 @@ This is a test.
 baz
 """
 
+
 class GrepTestCase(TestCase):
     def test_non_ascii(self):
         non_ascii = grin.GrepText(re.compile("é"))
@@ -377,7 +378,7 @@ class GrepTestCase(TestCase):
         regex_unicode = grin.GrepText(grin.utils.get_regex(options))
         self.assertEqual(
             regex_unicode.do_grep(BytesIO(unicode_digits)),
-            [(1, 0, 'an Arabic-Indic digit ٢ on the\n', [(22, 23)])],
+            [(1, 0, "an Arabic-Indic digit ٢ on the\n", [(22, 23)])],
         )
 
     def test_word_match_option(self):
@@ -396,5 +397,5 @@ class GrepTestCase(TestCase):
         regex_on_word_boundaries = grin.GrepText(grin.utils.get_regex(options))
         self.assertEqual(
             regex_on_word_boundaries.do_grep(BytesIO(word_boundaries)),
-            [(1, 0, 'This is a test.\n', [(10, 14)])],
+            [(1, 0, "This is a test.\n", [(10, 14)])],
         )
