@@ -412,7 +412,14 @@ def main(argv=None):
         g = GrepText(regex, args)
         openers = dict(text=open, gzip=gzip.open)
         for filename, kind in get_filenames(args):
-            report = g.grep_a_file(filename, opener=openers[kind], encoding=args.encoding)
+            try:
+                report = g.grep_a_file(filename, opener=openers[kind], encoding=args.encoding)
+            except (gzip.BadGzipFile, EOFError) as ex:
+                if kind != "gzip":
+                    # probably shouldn't happen; something weird
+                    raise
+                print(f"{filename}: {ex}; retrying as plaintext.", file=sys.stderr)
+                report = g.grep_a_file(filename, opener=openers["text"], encoding=args.encoding)
             sys.stdout.write(report)
     except KeyboardInterrupt:
         raise SystemExit(0)
