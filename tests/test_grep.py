@@ -25,8 +25,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import re
 import gzip
+import re
 from io import BytesIO
 from unittest import TestCase
 
@@ -476,18 +476,16 @@ class GrepTestCase(TestCase):
 
         # To be identified as a gzip file, it has to be passed in as an actual
         # instance of that, rather than just a BytesIO object.
-        gzip_file = gzip.GzipFile(
-            "made-up-file.gz", mode="rb", fileobj=BytesIO(gzip_text_compressed)
-        )
+        gzip_file = gzip.GzipFile("made-up-file.gz", mode="rb", fileobj=BytesIO(gzip_text_compressed))
         gt = grin.GrepText(re.compile("ni"))
         self.assertEqual(
             gt.do_grep(gzip_file),
             [
-                (12, 0, 'enthroning\n', [(6, 8)]),
-                (14, 0, 'Britannica\n', [(6, 8)]),
-                (16, 0, 'openings\n', [(3, 5)]),
-                (32, 0, 'niches\n', [(0, 2)])
-            ]
+                (12, 0, "enthroning\n", [(6, 8)]),
+                (14, 0, "Britannica\n", [(6, 8)]),
+                (16, 0, "openings\n", [(3, 5)]),
+                (32, 0, "niches\n", [(0, 2)]),
+            ],
         )
 
     def test_broken_gzip(self):
@@ -495,9 +493,7 @@ class GrepTestCase(TestCase):
         # file, so that it is caught in grin.main() and retried as a plaintext file.
 
         # Corrupt
-        gzip_file = gzip.GzipFile(
-            "made-up-file.gz", mode="rb", fileobj=BytesIO(gzip_text_compressed_trailing_garbage)
-        )
+        gzip_file = gzip.GzipFile("made-up-file.gz", mode="rb", fileobj=BytesIO(gzip_text_compressed_trailing_garbage))
         gt = grin.GrepText(re.compile("ni"))
         self.assertRaises(
             gzip.BadGzipFile,
@@ -506,9 +502,7 @@ class GrepTestCase(TestCase):
         )
 
         # Truncated
-        gzip_file = gzip.GzipFile(
-            "made-up-file.gz", mode="rb", fileobj=BytesIO(gzip_text_compressed[:-5])
-        )
+        gzip_file = gzip.GzipFile("made-up-file.gz", mode="rb", fileobj=BytesIO(gzip_text_compressed[:-5]))
         gt = grin.GrepText(re.compile("ni"))
         self.assertRaises(
             EOFError,
@@ -520,7 +514,4 @@ class GrepTestCase(TestCase):
         # Make sure do_grep() can find a plaintext match in a broken gzip file.
 
         gt = grin.GrepText(re.compile("ar"))
-        self.assertEqual(
-            gt.do_grep(BytesIO(gzip_text_compressed_trailing_garbage)),
-            [(2, 0, 'arborist\n', [(0, 2)])]
-        )
+        self.assertEqual(gt.do_grep(BytesIO(gzip_text_compressed_trailing_garbage)), [(2, 0, "arborist\n", [(0, 2)])])
