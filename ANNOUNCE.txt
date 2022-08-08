@@ -4,6 +4,10 @@ files, primarily source code.
  Download:     http://pypi.python.org/pypi/grin3
  License:      BSD
 
+grin 2.6.1 is a bug-fix release.
+
+  * detect bad gzip files (thanks Charles Cazabon)
+
 grin 2.6.0 is a feature release.
 
   * add support for Python 3.10
